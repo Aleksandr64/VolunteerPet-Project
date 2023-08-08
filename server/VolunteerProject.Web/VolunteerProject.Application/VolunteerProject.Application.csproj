@@ -12,4 +12,9 @@
     <Folder Include="Services\" />
   </ItemGroup>
 
+  <ItemGroup>
+    <ProjectReference Include="..\VolunteerProject.Domain\VolunteerProject.Domain.csproj" />
+    <ProjectReference Include="..\VolunteerProject.Infrastructure\VolunteerProject.Infrastructure.csproj" />
+  </ItemGroup>
+
 </Project>

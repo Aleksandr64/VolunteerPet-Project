@@ -6,7 +6,8 @@ using System.Threading.Tasks;
 
 namespace VolunteerProject.Domain.Models
 {
-    internal class Post
+    public class Post
     {
+
     }
 }
