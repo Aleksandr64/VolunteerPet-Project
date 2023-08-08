@@ -7,5 +7,10 @@ namespace VolunteerProject.Web.Controllers
     [ApiController]
     public class PostController : ControllerBase
     {
+        [HttpGet("TestEndPoint")]
+        public IActionResult TestRequest()
+        {
+            return Ok();
+        }
     }
 }

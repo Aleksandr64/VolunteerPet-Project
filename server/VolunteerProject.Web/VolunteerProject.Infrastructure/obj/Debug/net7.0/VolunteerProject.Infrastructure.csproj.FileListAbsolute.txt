@@ -1,0 +1,15 @@
+D:\Навчання\Самостійне\PetProject\VolunteerPet-Project\server\VolunteerProject.Web\VolunteerProject.Infrastructure\bin\Debug\net7.0\VolunteerProject.Infrastructure.deps.json
+D:\Навчання\Самостійне\PetProject\VolunteerPet-Project\server\VolunteerProject.Web\VolunteerProject.Infrastructure\bin\Debug\net7.0\VolunteerProject.Infrastructure.dll
+D:\Навчання\Самостійне\PetProject\VolunteerPet-Project\server\VolunteerProject.Web\VolunteerProject.Infrastructure\bin\Debug\net7.0\VolunteerProject.Infrastructure.pdb
+D:\Навчання\Самостійне\PetProject\VolunteerPet-Project\server\VolunteerProject.Web\VolunteerProject.Infrastructure\bin\Debug\net7.0\VolunteerProject.Domain.dll
+D:\Навчання\Самостійне\PetProject\VolunteerPet-Project\server\VolunteerProject.Web\VolunteerProject.Infrastructure\bin\Debug\net7.0\VolunteerProject.Domain.pdb
+D:\Навчання\Самостійне\PetProject\VolunteerPet-Project\server\VolunteerProject.Web\VolunteerProject.Infrastructure\obj\Debug\net7.0\VolunteerProject.Infrastructure.csproj.AssemblyReference.cache
+D:\Навчання\Самостійне\PetProject\VolunteerPet-Project\server\VolunteerProject.Web\VolunteerProject.Infrastructure\obj\Debug\net7.0\VolunteerProject.Infrastructure.GeneratedMSBuildEditorConfig.editorconfig
+D:\Навчання\Самостійне\PetProject\VolunteerPet-Project\server\VolunteerProject.Web\VolunteerProject.Infrastructure\obj\Debug\net7.0\VolunteerProject.Infrastructure.AssemblyInfoInputs.cache
+D:\Навчання\Самостійне\PetProject\VolunteerPet-Project\server\VolunteerProject.Web\VolunteerProject.Infrastructure\obj\Debug\net7.0\VolunteerProject.Infrastructure.AssemblyInfo.cs
+D:\Навчання\Самостійне\PetProject\VolunteerPet-Project\server\VolunteerProject.Web\VolunteerProject.Infrastructure\obj\Debug\net7.0\VolunteerProject.Infrastructure.csproj.CoreCompileInputs.cache
+D:\Навчання\Самостійне\PetProject\VolunteerPet-Project\server\VolunteerProject.Web\VolunteerProject.Infrastructure\obj\Debug\net7.0\VolunteerProject.Infrastructure.csproj.CopyComplete
+D:\Навчання\Самостійне\PetProject\VolunteerPet-Project\server\VolunteerProject.Web\VolunteerProject.Infrastructure\obj\Debug\net7.0\VolunteerProject.Infrastructure.dll
+D:\Навчання\Самостійне\PetProject\VolunteerPet-Project\server\VolunteerProject.Web\VolunteerProject.Infrastructure\obj\Debug\net7.0\refint\VolunteerProject.Infrastructure.dll
+D:\Навчання\Самостійне\PetProject\VolunteerPet-Project\server\VolunteerProject.Web\VolunteerProject.Infrastructure\obj\Debug\net7.0\VolunteerProject.Infrastructure.pdb
+D:\Навчання\Самостійне\PetProject\VolunteerPet-Project\server\VolunteerProject.Web\VolunteerProject.Infrastructure\obj\Debug\net7.0\ref\VolunteerProject.Infrastructure.dll

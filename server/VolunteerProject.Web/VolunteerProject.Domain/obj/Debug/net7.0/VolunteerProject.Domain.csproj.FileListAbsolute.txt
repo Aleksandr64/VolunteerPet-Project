@@ -1,0 +1,12 @@
+D:\Навчання\Самостійне\PetProject\VolunteerPet-Project\server\VolunteerProject.Web\VolunteerProject.Domain\bin\Debug\net7.0\VolunteerProject.Domain.deps.json
+D:\Навчання\Самостійне\PetProject\VolunteerPet-Project\server\VolunteerProject.Web\VolunteerProject.Domain\bin\Debug\net7.0\VolunteerProject.Domain.dll
+D:\Навчання\Самостійне\PetProject\VolunteerPet-Project\server\VolunteerProject.Web\VolunteerProject.Domain\bin\Debug\net7.0\VolunteerProject.Domain.pdb
+D:\Навчання\Самостійне\PetProject\VolunteerPet-Project\server\VolunteerProject.Web\VolunteerProject.Domain\obj\Debug\net7.0\VolunteerProject.Domain.csproj.AssemblyReference.cache
+D:\Навчання\Самостійне\PetProject\VolunteerPet-Project\server\VolunteerProject.Web\VolunteerProject.Domain\obj\Debug\net7.0\VolunteerProject.Domain.GeneratedMSBuildEditorConfig.editorconfig
+D:\Навчання\Самостійне\PetProject\VolunteerPet-Project\server\VolunteerProject.Web\VolunteerProject.Domain\obj\Debug\net7.0\VolunteerProject.Domain.AssemblyInfoInputs.cache
+D:\Навчання\Самостійне\PetProject\VolunteerPet-Project\server\VolunteerProject.Web\VolunteerProject.Domain\obj\Debug\net7.0\VolunteerProject.Domain.AssemblyInfo.cs
+D:\Навчання\Самостійне\PetProject\VolunteerPet-Project\server\VolunteerProject.Web\VolunteerProject.Domain\obj\Debug\net7.0\VolunteerProject.Domain.csproj.CoreCompileInputs.cache
+D:\Навчання\Самостійне\PetProject\VolunteerPet-Project\server\VolunteerProject.Web\VolunteerProject.Domain\obj\Debug\net7.0\VolunteerProject.Domain.dll
+D:\Навчання\Самостійне\PetProject\VolunteerPet-Project\server\VolunteerProject.Web\VolunteerProject.Domain\obj\Debug\net7.0\refint\VolunteerProject.Domain.dll
+D:\Навчання\Самостійне\PetProject\VolunteerPet-Project\server\VolunteerProject.Web\VolunteerProject.Domain\obj\Debug\net7.0\VolunteerProject.Domain.pdb
+D:\Навчання\Самостійне\PetProject\VolunteerPet-Project\server\VolunteerProject.Web\VolunteerProject.Domain\obj\Debug\net7.0\ref\VolunteerProject.Domain.dll

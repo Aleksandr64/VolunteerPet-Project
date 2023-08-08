@@ -1,0 +1,17 @@
+D:\Навчання\Самостійне\PetProject\VolunteerPet-Project\server\VolunteerProject.Web\VolunteerProject.Application\bin\Debug\net7.0\VolunteerProject.Application.deps.json
+D:\Навчання\Самостійне\PetProject\VolunteerPet-Project\server\VolunteerProject.Web\VolunteerProject.Application\bin\Debug\net7.0\VolunteerProject.Application.dll
+D:\Навчання\Самостійне\PetProject\VolunteerPet-Project\server\VolunteerProject.Web\VolunteerProject.Application\bin\Debug\net7.0\VolunteerProject.Application.pdb
+D:\Навчання\Самостійне\PetProject\VolunteerPet-Project\server\VolunteerProject.Web\VolunteerProject.Application\bin\Debug\net7.0\VolunteerProject.Domain.dll
+D:\Навчання\Самостійне\PetProject\VolunteerPet-Project\server\VolunteerProject.Web\VolunteerProject.Application\bin\Debug\net7.0\VolunteerProject.Infrastructure.dll
+D:\Навчання\Самостійне\PetProject\VolunteerPet-Project\server\VolunteerProject.Web\VolunteerProject.Application\bin\Debug\net7.0\VolunteerProject.Domain.pdb
+D:\Навчання\Самостійне\PetProject\VolunteerPet-Project\server\VolunteerProject.Web\VolunteerProject.Application\bin\Debug\net7.0\VolunteerProject.Infrastructure.pdb
+D:\Навчання\Самостійне\PetProject\VolunteerPet-Project\server\VolunteerProject.Web\VolunteerProject.Application\obj\Debug\net7.0\VolunteerProject.Application.csproj.AssemblyReference.cache
+D:\Навчання\Самостійне\PetProject\VolunteerPet-Project\server\VolunteerProject.Web\VolunteerProject.Application\obj\Debug\net7.0\VolunteerProject.Application.GeneratedMSBuildEditorConfig.editorconfig
+D:\Навчання\Самостійне\PetProject\VolunteerPet-Project\server\VolunteerProject.Web\VolunteerProject.Application\obj\Debug\net7.0\VolunteerProject.Application.AssemblyInfoInputs.cache
+D:\Навчання\Самостійне\PetProject\VolunteerPet-Project\server\VolunteerProject.Web\VolunteerProject.Application\obj\Debug\net7.0\VolunteerProject.Application.AssemblyInfo.cs
+D:\Навчання\Самостійне\PetProject\VolunteerPet-Project\server\VolunteerProject.Web\VolunteerProject.Application\obj\Debug\net7.0\VolunteerProject.Application.csproj.CoreCompileInputs.cache
+D:\Навчання\Самостійне\PetProject\VolunteerPet-Project\server\VolunteerProject.Web\VolunteerProject.Application\obj\Debug\net7.0\VolunteerProject.Application.csproj.CopyComplete
+D:\Навчання\Самостійне\PetProject\VolunteerPet-Project\server\VolunteerProject.Web\VolunteerProject.Application\obj\Debug\net7.0\VolunteerProject.Application.dll
+D:\Навчання\Самостійне\PetProject\VolunteerPet-Project\server\VolunteerProject.Web\VolunteerProject.Application\obj\Debug\net7.0\refint\VolunteerProject.Application.dll
+D:\Навчання\Самостійне\PetProject\VolunteerPet-Project\server\VolunteerProject.Web\VolunteerProject.Application\obj\Debug\net7.0\VolunteerProject.Application.pdb
+D:\Навчання\Самостійне\PetProject\VolunteerPet-Project\server\VolunteerProject.Web\VolunteerProject.Application\obj\Debug\net7.0\ref\VolunteerProject.Application.dll
