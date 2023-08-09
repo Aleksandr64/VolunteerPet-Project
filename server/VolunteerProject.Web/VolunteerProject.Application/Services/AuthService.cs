@@ -4,9 +4,9 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 
-namespace VolunteerProject.Infrastructure.Repositoriy.Interface
+namespace VolunteerProject.Application.Services
 {
-    internal interface IAuthRepository
+    internal class AuthService
     {
     }
 }

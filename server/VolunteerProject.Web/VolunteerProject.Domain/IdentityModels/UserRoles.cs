@@ -6,7 +6,9 @@ using System.Threading.Tasks;
 
 namespace VolunteerProject.Domain.IdentityModels
 {
-    internal class UserRoles
+    public class UserRoles
     {
+        private const string User = "User";
+        private const string Admin = "Admin";
     }
 }
