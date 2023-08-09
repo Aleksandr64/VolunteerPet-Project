@@ -7,7 +7,7 @@
   </PropertyGroup>
 
   <ItemGroup>
-    <Folder Include="DTOs\" />
+    <Folder Include="DTOs\AuthDTOs\Responce\" />
     <Folder Include="Mappers\" />
   </ItemGroup>
 
