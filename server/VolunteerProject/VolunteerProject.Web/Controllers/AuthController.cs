@@ -1,6 +1,8 @@
 ﻿using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
 using VolunteerProject.Application.DTOs.AuthDTOs.Request;
+using VolunteerProject.Application.Services.Interface;
+using VolunteerProject.Web.Decryptor;
 
 namespace VolunteerProject.Web.Controllers
 {
@@ -8,7 +10,12 @@ namespace VolunteerProject.Web.Controllers
     [ApiController]
     public class AuthController : ControllerBase
     {
-        
+        private readonly IAuthService _authService;
+
+        public AuthController(IAuthService authService)
+        {
+            _authService = authService;
+        }
 
         [HttpPost("Loggin")]
         public async Task<IActionResult> Loggin([FromBody] UserLogingRequest loggingRequest)
@@ -16,10 +23,11 @@ namespace VolunteerProject.Web.Controllers
             return Ok();
         }
 
-
+        [HttpPost("RegisterUser")]
         public async Task<IActionResult> UserRegistration([FromBody] UserRegistrationRequest registrationRequest)
         {
-            return Ok();
+            var registerResponce = await _authService.RegisterUser(registrationRequest);
+            return this.GetResponse(registerResponce);
         }
     }
 }

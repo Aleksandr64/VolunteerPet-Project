@@ -3,6 +3,8 @@ using Microsoft.AspNetCore.Identity;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.IdentityModel.Tokens;
 using System.Text;
+using VolunteerProject.Application.Services;
+using VolunteerProject.Application.Services.Interface;
 using VolunteerProject.Domain.IdentityModels;
 using VolunteerProject.Infrastructure.Context;
 
@@ -23,7 +25,7 @@ builder.Services.AddIdentity<User, IdentityRole>(o =>
     o.User.RequireUniqueEmail = true;
 })
 .AddEntityFrameworkStores<IdentityVolunteerDbContext>()
-.AddUserManager<IdentityVolunteerDbContext>();
+.AddDefaultTokenProviders();
 
 builder.Services.AddAuthentication(opt => 
 {
@@ -47,6 +49,8 @@ builder.Services.AddAuthentication(opt =>
     };
 });
 
+builder.Services.AddScoped<IAuthService, AuthService>();
+
 builder.Services.AddControllers();
 // Learn more about configuring Swagger/OpenAPI at https://aka.ms/aspnetcore/swashbuckle
 builder.Services.AddEndpointsApiExplorer();
@@ -59,6 +63,12 @@ if (app.Environment.IsDevelopment())
 {
     app.UseSwagger();
     app.UseSwaggerUI();
+}
+
+using(var scope = app.Services.CreateScope())
+{
+    var dbContext = scope.ServiceProvider.GetRequiredService<IdentityVolunteerDbContext>();
+    dbContext.Database.Migrate();
 }
 
 app.UseHttpsRedirection();
