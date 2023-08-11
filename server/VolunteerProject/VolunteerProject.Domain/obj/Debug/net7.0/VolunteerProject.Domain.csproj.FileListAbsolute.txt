@@ -22,3 +22,5 @@ D:\Навчання\Самостійне\PetProject\VolunteerPet-Project\server\
 D:\Навчання\Самостійне\PetProject\VolunteerPet-Project\server\VolunteerProject\VolunteerProject.Domain\obj\Debug\net7.0\refint\VolunteerProject.Domain.dll
 D:\Навчання\Самостійне\PetProject\VolunteerPet-Project\server\VolunteerProject\VolunteerProject.Domain\obj\Debug\net7.0\VolunteerProject.Domain.pdb
 D:\Навчання\Самостійне\PetProject\VolunteerPet-Project\server\VolunteerProject\VolunteerProject.Domain\obj\Debug\net7.0\ref\VolunteerProject.Domain.dll
+D:\Навчання\Самостійне\PetProject\VolunteerPet-Project\server\VolunteerProject\VolunteerProject.Domain\bin\Debug\net7.0\VolunteerProject.Domain.runtimeconfig.json
+D:\Навчання\Самостійне\PetProject\VolunteerPet-Project\server\VolunteerProject\VolunteerProject.Domain\obj\Debug\net7.0\VolunteerProject.Domain.genruntimeconfig.cache

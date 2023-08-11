@@ -1,7 +1,12 @@
 ﻿using Microsoft.AspNetCore.Identity;
+using Microsoft.Extensions.Configuration;
+using Microsoft.Identity.Client;
+using Microsoft.IdentityModel.Tokens;
 using System;
 using System.Collections.Generic;
+using System.IdentityModel.Tokens.Jwt;
 using System.Linq;
+using System.Security.Claims;
 using System.Text;
 using System.Threading.Tasks;
 using VolunteerProject.Application.DTOs.AuthDTOs.Request;
@@ -15,23 +20,57 @@ namespace VolunteerProject.Application.Services
 {
     public class AuthService : IAuthService
     {
-        private readonly IdentityVolunteerDbContext _dbContext;
         private readonly UserManager<User> _userManager;
         private readonly RoleManager<IdentityRole> _roleManager;
+        private readonly IConfiguration _configuration;
 
         public AuthService(
-            IdentityVolunteerDbContext dbContext,
             UserManager<User> userManager,
-            RoleManager<IdentityRole> roleManager)
+            RoleManager<IdentityRole> roleManager,
+            IConfiguration configuration)
         {
-            _dbContext = dbContext;
             _userManager = userManager;
             _roleManager = roleManager;
+            _configuration = configuration;
         }
 
-        public Task<Result<string>> LoginUser(UserLogingRequest userLoging)
+        public async Task<Result<string>> LoginUser(UserLogingRequest userLoging)
         {
-            throw new NotImplementedException();
+            var user = await _userManager.FindByNameAsync(userLoging.UserName);
+
+            if (user == null)
+            {
+                return new NotFoundResult<string>("There is no user with this Username");
+            }
+
+            var userPasswordCheck = await _userManager.CheckPasswordAsync(user, userLoging.Password); 
+            
+            if(!userPasswordCheck)
+            {
+                return new NotFoundResult<string>("This password is not correct");
+            }
+
+            var userRoles = await _userManager.GetRolesAsync(user);
+
+            var authClaims = new List<Claim>
+            {
+                new Claim(ClaimTypes.Name, user.UserName),
+                new Claim(JwtRegisteredClaimNames.Jti, Guid.NewGuid().ToString())
+            };
+
+            foreach(var userRole in userRoles)
+            {
+                authClaims.Add(new Claim(ClaimTypes.Role, userRole));
+            }
+
+            var token = GenerateToken(authClaims);
+
+            if(token != null)
+            {
+                return new SuccessResult<string>(new JwtSecurityTokenHandler().WriteToken(token));
+            }
+
+            return new NotFoundResult<string>("Failed create token");
         }
 
         public async Task<Result<string>> RegisterUser(UserRegistrationRequest userRegistration)
@@ -40,21 +79,21 @@ namespace VolunteerProject.Application.Services
 
             if(userNameCheck != null)
             {
-                return new BadRequestResult<string>("A User with such a Username exists");
+                return new NotFoundResult<string>("A User with such a Username exists");
             }
 
             var userEmailCheck = await _userManager.FindByEmailAsync(userRegistration.Email);
 
             if(userEmailCheck != null)
             {
-                return new BadRequestResult<string>("A User with such a Email exists");
+                return new NotFoundResult<string>("A User with such a Email exists");
             }
 
             var user = userRegistration.ToUser();
 
             if (user == null) 
             {
-                return new BadRequestResult<string>("Failled create entity User.");
+                return new NotFoundResult<string>("Failled create entity User.");
             }
 
             var result = await _userManager.CreateAsync(user, userRegistration.Password);
@@ -75,6 +114,28 @@ namespace VolunteerProject.Application.Services
             }
 
             return new NotFoundResult<string>("Failer register user");
+        }
+
+        private JwtSecurityToken GenerateToken(List<Claim> authClaims, bool isRefreshToken = false)
+        {
+            var authSigningKey = new SymmetricSecurityKey(Encoding.UTF8.GetBytes(_configuration["Jwt:Key"]));
+            //var tokenValidity = isRefreshToken
+            //    ? int.Parse(_configuration["Jwt:RefreshTokenValidityInDays"])
+            //    : int.Parse(_configuration["Jwt:AccesTokenValidityInMinutes"]);
+
+            //var validity = isRefreshToken
+            //    ? DateTime.UtcNow.AddDays(tokenValidity)
+            //    : DateTime.UtcNow.AddMinutes(tokenValidity);
+
+            var token = new JwtSecurityToken(
+                issuer: _configuration["Jwt:Issuer"],
+                audience: _configuration["Jwt:Audience"],
+                expires: DateTime.Now.AddHours(3),
+                claims: authClaims,
+                signingCredentials: new SigningCredentials(authSigningKey, SecurityAlgorithms.HmacSha256)
+            );
+
+            return token;
         }
     }
 }

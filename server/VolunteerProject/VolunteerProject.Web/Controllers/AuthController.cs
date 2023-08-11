@@ -20,7 +20,8 @@ namespace VolunteerProject.Web.Controllers
         [HttpPost("Loggin")]
         public async Task<IActionResult> Loggin([FromBody] UserLogingRequest loggingRequest)
         {
-            return Ok();
+            var token = await _authService.LoginUser(loggingRequest);
+            return this.GetResponse(token);
         }
 
         [HttpPost("RegisterUser")]

@@ -6,7 +6,7 @@ using Microsoft.EntityFrameworkCore.Migrations;
 namespace VolunteerProject.Infrastructure.Migrations
 {
     /// <inheritdoc />
-    public partial class AddIdentitVolunteerDbContext : Migration
+    public partial class AddIdentityVolunteerDbContext : Migration
     {
         /// <inheritdoc />
         protected override void Up(MigrationBuilder migrationBuilder)

@@ -71,11 +71,11 @@ using(var scope = app.Services.CreateScope())
     dbContext.Database.Migrate();
 }
 
-app.UseHttpsRedirection();
+app.UseRouting();
 
 app.UseAuthentication();
 app.UseAuthorization();
 
-app.MapControllers();
+app.UseEndpoints(endpoints => { endpoints.MapControllers(); }); 
 
 app.Run();

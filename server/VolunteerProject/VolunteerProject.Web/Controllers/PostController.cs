@@ -1,5 +1,8 @@
-﻿using Microsoft.AspNetCore.Http;
+﻿using Microsoft.AspNetCore.Authorization;
+using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
+using VolunteerProject.Domain.ResultModels;
+using VolunteerProject.Web.Decryptor;
 
 namespace VolunteerProject.Web.Controllers
 {
@@ -7,10 +10,11 @@ namespace VolunteerProject.Web.Controllers
     [ApiController]
     public class PostController : ControllerBase
     {
+        [Authorize]
         [HttpGet("TestEndPoint")]
         public IActionResult TestRequest()
         {
-            return Ok();
+            return this.GetResponse(new SuccessResult<string>(default!));
         }
     }
 }

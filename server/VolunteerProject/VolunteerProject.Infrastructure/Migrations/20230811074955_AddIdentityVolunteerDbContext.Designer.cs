@@ -12,8 +12,8 @@ using VolunteerProject.Infrastructure.Context;
 namespace VolunteerProject.Infrastructure.Migrations
 {
     [DbContext(typeof(IdentityVolunteerDbContext))]
-    [Migration("20230810090314_AddIdentitVolunteerDbContext")]
-    partial class AddIdentitVolunteerDbContext
+    [Migration("20230811074955_AddIdentityVolunteerDbContext")]
+    partial class AddIdentityVolunteerDbContext
     {
         /// <inheritdoc />
         protected override void BuildTargetModel(ModelBuilder modelBuilder)
