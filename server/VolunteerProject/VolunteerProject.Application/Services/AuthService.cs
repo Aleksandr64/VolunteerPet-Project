@@ -119,13 +119,6 @@ namespace VolunteerProject.Application.Services
         private JwtSecurityToken GenerateToken(List<Claim> authClaims, bool isRefreshToken = false)
         {
             var authSigningKey = new SymmetricSecurityKey(Encoding.UTF8.GetBytes(_configuration["Jwt:Key"]));
-            //var tokenValidity = isRefreshToken
-            //    ? int.Parse(_configuration["Jwt:RefreshTokenValidityInDays"])
-            //    : int.Parse(_configuration["Jwt:AccesTokenValidityInMinutes"]);
-
-            //var validity = isRefreshToken
-            //    ? DateTime.UtcNow.AddDays(tokenValidity)
-            //    : DateTime.UtcNow.AddMinutes(tokenValidity);
 
             var token = new JwtSecurityToken(
                 issuer: _configuration["Jwt:Issuer"],

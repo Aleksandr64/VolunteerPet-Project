@@ -11,9 +11,9 @@ using VolunteerProject.Infrastructure.Context;
 var builder = WebApplication.CreateBuilder(args);
 
 // Add services to the container.
-builder.Services.AddDbContext<IdentityVolunteerDbContext>(options =>
+builder.Services.AddDbContext<VolunteerDbContext>(options =>
 {
-    options.UseSqlServer(builder.Configuration.GetConnectionString("IdentityConnectionString"));
+    options.UseSqlServer(builder.Configuration.GetConnectionString("DefaoultConnectionString"));
 });
 
 builder.Services.AddIdentity<User, IdentityRole>(o =>
@@ -24,7 +24,7 @@ builder.Services.AddIdentity<User, IdentityRole>(o =>
     o.Password.RequireNonAlphanumeric = false;
     o.User.RequireUniqueEmail = true;
 })
-.AddEntityFrameworkStores<IdentityVolunteerDbContext>()
+.AddEntityFrameworkStores<VolunteerDbContext>()
 .AddDefaultTokenProviders();
 
 builder.Services.AddAuthentication(opt => 
@@ -67,7 +67,7 @@ if (app.Environment.IsDevelopment())
 
 using(var scope = app.Services.CreateScope())
 {
-    var dbContext = scope.ServiceProvider.GetRequiredService<IdentityVolunteerDbContext>();
+    var dbContext = scope.ServiceProvider.GetRequiredService<VolunteerDbContext>();
     dbContext.Database.Migrate();
 }
 
