@@ -7,6 +7,8 @@ using VolunteerProject.Application.Services;
 using VolunteerProject.Application.Services.Interface;
 using VolunteerProject.Domain.IdentityModels;
 using VolunteerProject.Infrastructure.Context;
+using VolunteerProject.Infrastructure.Repositoriy;
+using VolunteerProject.Infrastructure.Repositoriy.Interface;
 
 var builder = WebApplication.CreateBuilder(args);
 
@@ -50,6 +52,8 @@ builder.Services.AddAuthentication(opt =>
 });
 
 builder.Services.AddScoped<IAuthService, AuthService>();
+builder.Services.AddScoped<IPostsService, PostsService>();
+builder.Services.AddScoped<IPostRepositoriy, PostRepositoriy>();
 
 builder.Services.AddControllers();
 // Learn more about configuring Swagger/OpenAPI at https://aka.ms/aspnetcore/swashbuckle

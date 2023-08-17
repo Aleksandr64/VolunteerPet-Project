@@ -8,7 +8,7 @@ namespace VolunteerProject.Web.Controllers
 {
     [Route("api/[controller]")]
     [ApiController]
-    public class PostController : ControllerBase
+    public class TestController : ControllerBase
     {
         [Authorize]
         [HttpGet("TestEndPoint")]
