@@ -39,5 +39,13 @@ namespace VolunteerProject.Web.Controllers
             var postData = await _postService.AddPost(newPost);
             return this.GetResponse(postData);
         }
+
+        [HttpDelete("DeletePost")]
+        public async Task<IActionResult> DeletePost(Guid Id)
+        {
+            var deletePostResult = await _postService.DeletePost(Id);
+            return this.GetResponse(deletePostResult);
+        }
+
     }
 }

@@ -93,5 +93,17 @@ namespace VolunteerProject.Application.Services
 
             return new SuccessResult<IEnumerable<GetPostResponce>>(postsReturn);
         }
+
+        public async Task<Result<string>> DeletePost(Guid Id)
+        {
+            var resultDeltePost = await _postRepositoriy.DeletePost(Id);
+
+            if(resultDeltePost == null)
+            {
+                return new NotFoundResult<string>("Failed delete post");
+            }
+
+            return new SuccessResult<string>(default!);
+        }
     }
 }

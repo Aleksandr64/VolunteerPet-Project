@@ -39,6 +39,17 @@ namespace VolunteerProject.Infrastructure.Repositoriy
             await SaveChanges();
             return postEntity.Entity;
         }
+        public async Task<string> DeletePost(Guid Id)
+        {
+            var post = await _dbContext.Posts.FirstOrDefaultAsync(p => p.Id == Id);
+            if(post == null)
+            {
+                return default!;
+            }
+            _dbContext.Posts.Remove(post);
+            await SaveChanges();
+            return "Succeed delete publication";
+        }
 
         private async Task SaveChanges()
         {
