@@ -9,6 +9,8 @@ namespace VolunteerProject.Infrastructure.Repositoriy.Interface
 {
     public interface IPostRepositoriy
     {
-        public Post CreatePost(Post post);
+        public Task<Post> CreatePost(Post post);
+        public Task<IEnumerable<Post>> GetAllPosts();
+        public Task<IEnumerable<Post>> GetPostsByTitle(string title);
     }
 }

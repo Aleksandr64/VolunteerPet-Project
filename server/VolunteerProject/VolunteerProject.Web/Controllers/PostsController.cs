@@ -1,4 +1,5 @@
-﻿using Microsoft.AspNetCore.Http;
+﻿using Microsoft.AspNetCore.Authorization;
+using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
 using VolunteerProject.Application.DTOs.PostDTOs;
 using VolunteerProject.Application.DTOs.PostDTOs.Request;
@@ -17,6 +18,21 @@ namespace VolunteerProject.Web.Controllers
         {
             _postService = postsService;
         }
+
+        [HttpGet("GetAllPosts")]
+        public async Task<IActionResult> GetAllPosts() 
+        {
+            var allPosts = await _postService.GetAllPosts();
+            return this.GetResponse(allPosts);
+        }
+
+        [HttpGet("GetPostByTitle")]
+        public async Task<IActionResult> GetPostByTitle(string titlePost)
+        {
+            var postByTitle = await _postService.GetPostByTitle(titlePost);
+            return this.GetResponse(postByTitle);
+        }
+
         [HttpPost("AddPost")]
         public async Task<IActionResult> AddNewPost([FromBody] AddPostRequest newPost)
         {

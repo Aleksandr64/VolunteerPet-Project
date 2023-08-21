@@ -12,6 +12,7 @@ namespace VolunteerProject.Application.DTOs.PostDTOs.Responce
         public string Description { get; set; }
         public string UrlSocialNetwork { get; set; }
         public string UrlFundraisingAccount { get; set; }
+        public bool ThisEventHaveEndDate { get; set; } = false;
         public DateTime EndDate { get; set; }
     }
 }

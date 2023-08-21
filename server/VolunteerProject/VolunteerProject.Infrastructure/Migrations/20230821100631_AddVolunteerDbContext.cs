@@ -62,6 +62,7 @@ namespace VolunteerProject.Infrastructure.Migrations
                     UrlSocialNetwork = table.Column<string>(type: "nvarchar(max)", nullable: false),
                     UrlFundraisingAccount = table.Column<string>(type: "nvarchar(max)", nullable: false),
                     CreateDate = table.Column<DateTime>(type: "datetime2", nullable: false),
+                    ThisEventHaveEndDate = table.Column<bool>(type: "bit", nullable: false),
                     EndDate = table.Column<DateTime>(type: "datetime2", nullable: false)
                 },
                 constraints: table =>

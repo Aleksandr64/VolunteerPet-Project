@@ -13,5 +13,7 @@ namespace VolunteerProject.Application.Services.Interface
     public interface IPostsService
     {
         public Task<Result<GetPostResponce>> AddPost(AddPostRequest postData);
+        public Task<Result<IEnumerable<GetPostResponce>>> GetAllPosts();
+        public Task<Result<IEnumerable<GetPostResponce>>> GetPostByTitle(string title);
     }
 }

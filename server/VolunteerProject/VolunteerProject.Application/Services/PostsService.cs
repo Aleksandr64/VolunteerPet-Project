@@ -1,4 +1,5 @@
 ﻿using System;
+using System.Collections;
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
@@ -13,13 +14,39 @@ using VolunteerProject.Infrastructure.Repositoriy.Interface;
 
 namespace VolunteerProject.Application.Services
 {
-    public class PostsService : IPostsService
+    public class PostsService : IPostsService 
     {
         private readonly IPostRepositoriy _postRepositoriy;
 
         public PostsService(IPostRepositoriy postRepositotiy)
         {
             _postRepositoriy = postRepositotiy;
+        }
+
+        public async Task<Result<IEnumerable<GetPostResponce>>> GetAllPosts()
+        {
+            var allPosts = await _postRepositoriy.GetAllPosts();
+            
+            if(allPosts == null)
+            {
+                return new NotFoundResult<IEnumerable<GetPostResponce>>("Failed get all data from data base");
+            }
+
+            var allPostsReturn = new List<GetPostResponce>();
+
+            foreach(var post in allPosts)
+            {
+                var postReturn = post.ToPostResponse();
+
+                allPostsReturn.Add(postReturn);
+            }
+
+            if(allPostsReturn == null)
+            {
+                return new NotFoundResult<IEnumerable<GetPostResponce>>("Failed create list with all posts");
+            }
+
+            return new SuccessResult<IEnumerable<GetPostResponce>>(allPostsReturn);
         }
 
         public async Task<Result<GetPostResponce>> AddPost(AddPostRequest postData)
@@ -31,7 +58,7 @@ namespace VolunteerProject.Application.Services
                 return new NotFoundResult<GetPostResponce>(default!);
             }
 
-            var postCreate = _postRepositoriy.CreatePost(post);
+            var postCreate = await _postRepositoriy.CreatePost(post);
             
             if(postCreate != null)
             {
@@ -39,6 +66,32 @@ namespace VolunteerProject.Application.Services
             }
 
             return new NotFoundResult<GetPostResponce>("Error add in Data Base post!");
+        }
+
+        public async Task<Result<IEnumerable<GetPostResponce>>> GetPostByTitle(string titlePost)
+        {
+            var postByTitle = await _postRepositoriy.GetPostsByTitle(titlePost);
+
+            if (postByTitle == null)
+            {
+                return new NotFoundResult<IEnumerable<GetPostResponce>>("Failed get data from data base");
+            }
+
+            var postsReturn = new List<GetPostResponce>();
+
+            foreach (var post in postByTitle)
+            {
+                var postReturn = post.ToPostResponse();
+
+                postsReturn.Add(postReturn);
+            }
+
+            if (postsReturn == null)
+            {
+                return new NotFoundResult<IEnumerable<GetPostResponce>>("Failed create list with posts");
+            }
+
+            return new SuccessResult<IEnumerable<GetPostResponce>>(postsReturn);
         }
     }
 }

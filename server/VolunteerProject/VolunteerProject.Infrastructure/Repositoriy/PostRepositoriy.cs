@@ -1,4 +1,5 @@
-﻿using System;
+﻿using Microsoft.EntityFrameworkCore;
+using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
@@ -18,13 +19,30 @@ namespace VolunteerProject.Infrastructure.Repositoriy
             _dbContext = dbContext;
         }
 
-        public Post CreatePost(Post post)
+        public async Task<IEnumerable<Post>> GetAllPosts()
+        {
+            var allPost = await _dbContext.Posts.ToListAsync();
+            return allPost;
+        }
+
+        public async Task<IEnumerable<Post>> GetPostsByTitle(string title)
+        {
+            var postByTitle = await _dbContext.Posts.Where(p => p.Title.ToLower().Contains(title.ToLower())).ToListAsync();
+            return postByTitle;
+        }
+
+        public async Task<Post> CreatePost(Post post)
         {
             post.Id = Guid.NewGuid();
             post.CreateDate = DateTime.UtcNow;
-            var postEntity = _dbContext.Posts.Add(post);
-            _dbContext.SaveChanges();
+            var postEntity = await _dbContext.Posts.AddAsync(post);
+            await SaveChanges();
             return postEntity.Entity;
+        }
+
+        private async Task SaveChanges()
+        {
+            await _dbContext.SaveChangesAsync();   
         }
     }
 }

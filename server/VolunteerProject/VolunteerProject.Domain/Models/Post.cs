@@ -14,6 +14,7 @@ namespace VolunteerProject.Domain.Models
         public string UrlSocialNetwork { get; set; }
         public string UrlFundraisingAccount { get; set; }
         public DateTime CreateDate { get; set; }
+        public bool ThisEventHaveEndDate { get; set; } = false;
         public DateTime EndDate { get; set; }
     }
 }

@@ -12,7 +12,7 @@ using VolunteerProject.Infrastructure.Context;
 namespace VolunteerProject.Infrastructure.Migrations
 {
     [DbContext(typeof(VolunteerDbContext))]
-    [Migration("20230815160733_AddVolunteerDbContext")]
+    [Migration("20230821100631_AddVolunteerDbContext")]
     partial class AddVolunteerDbContext
     {
         /// <inheritdoc />
@@ -153,6 +153,9 @@ namespace VolunteerProject.Infrastructure.Migrations
 
                     b.Property<DateTime>("EndDate")
                         .HasColumnType("datetime2");
+
+                    b.Property<bool>("ThisEventHaveEndDate")
+                        .HasColumnType("bit");
 
                     b.Property<string>("Title")
                         .IsRequired()
