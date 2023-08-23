@@ -47,5 +47,11 @@ namespace VolunteerProject.Web.Controllers
             return this.GetResponse(deletePostResult);
         }
 
+        [HttpPut("ChangeOfDataPost")]
+        public async Task<IActionResult> ChageOfDataPost([FromBody] PutPostRequest changePost)
+        {
+            var resultChangePost = await _postService.ChangeOfDataPost(changePost);
+            return this.GetResponse(resultChangePost);
+        }
     }
 }

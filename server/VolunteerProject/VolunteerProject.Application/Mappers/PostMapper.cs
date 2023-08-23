@@ -12,7 +12,7 @@ namespace VolunteerProject.Application.Mappers
 {
     public static class PostMapper
     {
-        public static Post ToPostRequest(this AddPostRequest AddPost)
+        public static Post ToPostAddRequest(this AddPostRequest AddPost)
         {
             return new Post
             {
@@ -20,18 +20,34 @@ namespace VolunteerProject.Application.Mappers
                 Description = AddPost.Description,
                 UrlSocialNetwork = AddPost.UrlSocialNetwork,
                 UrlFundraisingAccount = AddPost.UrlFundraisingAccount,
+                ThisEventHaveEndDate = AddPost.ThisEventHaveEndDate,    
                 EndDate = AddPost.EndDate,
             };
         }
-
-        public static GetPostResponce ToPostResponse(this Post post)
+        public static Post ToPostPutRequest(this PutPostRequest PutPost)
         {
-            return new GetPostResponce
+            return new Post
             {
+                Id = PutPost.Id,
+                Title = PutPost.Title,
+                Description = PutPost.Description,
+                UrlSocialNetwork = PutPost.UrlSocialNetwork,
+                UrlFundraisingAccount = PutPost.UrlFundraisingAccount,
+                ThisEventHaveEndDate = PutPost.ThisEventHaveEndDate,
+                EndDate = PutPost.EndDate,
+            };
+        }
+
+        public static PostResponce ToPostResponse(this Post post)
+        {
+            return new PostResponce
+            {
+                Id = post.Id,   
                 Title = post.Title,
                 Description = post.Description,
                 UrlSocialNetwork = post.UrlSocialNetwork,
                 UrlFundraisingAccount = post.UrlFundraisingAccount,
+                ThisEventHaveEndDate = post.ThisEventHaveEndDate,
                 EndDate = post.EndDate,
             };
         }

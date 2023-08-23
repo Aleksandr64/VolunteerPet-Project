@@ -23,16 +23,16 @@ namespace VolunteerProject.Application.Services
             _postRepositoriy = postRepositotiy;
         }
 
-        public async Task<Result<IEnumerable<GetPostResponce>>> GetAllPosts()
+        public async Task<Result<IEnumerable<PostResponce>>> GetAllPosts()
         {
             var allPosts = await _postRepositoriy.GetAllPosts();
             
             if(allPosts == null)
             {
-                return new NotFoundResult<IEnumerable<GetPostResponce>>("Failed get all data from data base");
+                return new NotFoundResult<IEnumerable<PostResponce>>("Failed get all data from data base");
             }
 
-            var allPostsReturn = new List<GetPostResponce>();
+            var allPostsReturn = new List<PostResponce>();
 
             foreach(var post in allPosts)
             {
@@ -43,41 +43,41 @@ namespace VolunteerProject.Application.Services
 
             if(allPostsReturn == null)
             {
-                return new NotFoundResult<IEnumerable<GetPostResponce>>("Failed create list with all posts");
+                return new NotFoundResult<IEnumerable<PostResponce>>("Failed create list with all posts");
             }
 
-            return new SuccessResult<IEnumerable<GetPostResponce>>(allPostsReturn);
+            return new SuccessResult<IEnumerable<PostResponce>>(allPostsReturn);
         }
 
-        public async Task<Result<GetPostResponce>> AddPost(AddPostRequest postData)
+        public async Task<Result<PostResponce>> AddPost(AddPostRequest postData)
         {
-            var post = postData.ToPostRequest();
+            var post = postData.ToPostAddRequest();
 
             if(post == null)
             {
-                return new NotFoundResult<GetPostResponce>(default!);
+                return new NotFoundResult<PostResponce>(default!);
             }
 
             var postCreate = await _postRepositoriy.CreatePost(post);
             
             if(postCreate != null)
             {
-                return new SuccessResult<GetPostResponce>(postCreate.ToPostResponse());
+                return new SuccessResult<PostResponce>(postCreate.ToPostResponse());
             }
 
-            return new NotFoundResult<GetPostResponce>("Error add in Data Base post!");
+            return new NotFoundResult<PostResponce>("Error add in Data Base post!");
         }
 
-        public async Task<Result<IEnumerable<GetPostResponce>>> GetPostByTitle(string titlePost)
+        public async Task<Result<IEnumerable<PostResponce>>> GetPostByTitle(string titlePost)
         {
             var postByTitle = await _postRepositoriy.GetPostsByTitle(titlePost);
 
             if (postByTitle == null)
             {
-                return new NotFoundResult<IEnumerable<GetPostResponce>>("Failed get data from data base");
+                return new NotFoundResult<IEnumerable<PostResponce>>("Failed get data from data base");
             }
 
-            var postsReturn = new List<GetPostResponce>();
+            var postsReturn = new List<PostResponce>();
 
             foreach (var post in postByTitle)
             {
@@ -88,10 +88,10 @@ namespace VolunteerProject.Application.Services
 
             if (postsReturn == null)
             {
-                return new NotFoundResult<IEnumerable<GetPostResponce>>("Failed create list with posts");
+                return new NotFoundResult<IEnumerable<PostResponce>>("Failed create list with posts");
             }
 
-            return new SuccessResult<IEnumerable<GetPostResponce>>(postsReturn);
+            return new SuccessResult<IEnumerable<PostResponce>>(postsReturn);
         }
 
         public async Task<Result<string>> DeletePost(Guid Id)
@@ -104,6 +104,27 @@ namespace VolunteerProject.Application.Services
             }
 
             return new SuccessResult<string>(default!);
+        }
+
+        public async Task<Result<PostResponce>> ChangeOfDataPost(PutPostRequest changePost)
+        {
+            var post = changePost.ToPostPutRequest();
+
+            var resultChangePost = await _postRepositoriy.ChangePost(post);
+
+            if(resultChangePost == null)
+            {
+                return new NotFoundResult<PostResponce>("Faile change data in data base");
+            }
+
+            var responceChangePost = resultChangePost.ToPostResponse();
+
+            if(responceChangePost == null)
+            {
+                return new NotFoundResult<PostResponce>("Failed convert in models");
+            }
+
+            return new SuccessResult<PostResponce>(responceChangePost);
         }
     }
 }

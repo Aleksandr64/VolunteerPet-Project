@@ -51,6 +51,25 @@ namespace VolunteerProject.Infrastructure.Repositoriy
             return "Succeed delete publication";
         }
 
+        public async Task<Post> ChangePost(Post post)
+        {
+            var postEntity = await _dbContext.Posts.FirstOrDefaultAsync(e => e.Id == post.Id);
+            if(postEntity != null)
+            {
+                postEntity.Title = post.Title;
+                postEntity.Description = post.Description;
+                postEntity.UrlSocialNetwork = post.UrlSocialNetwork;
+                postEntity.UrlFundraisingAccount = post.UrlFundraisingAccount;
+                postEntity.ThisEventHaveEndDate = post.ThisEventHaveEndDate;
+                postEntity.EndDate = post.EndDate;
+
+                await SaveChanges();
+
+                return postEntity;
+            }
+            return default!;
+        }
+
         private async Task SaveChanges()
         {
             await _dbContext.SaveChangesAsync();   

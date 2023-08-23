@@ -13,5 +13,6 @@ namespace VolunteerProject.Infrastructure.Repositoriy.Interface
         public Task<IEnumerable<Post>> GetAllPosts();
         public Task<IEnumerable<Post>> GetPostsByTitle(string title);
         public Task<string> DeletePost(Guid Id);
+        public Task<Post> ChangePost(Post post);
     }
 }
