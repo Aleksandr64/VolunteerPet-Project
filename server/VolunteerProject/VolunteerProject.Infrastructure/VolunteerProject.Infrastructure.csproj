@@ -27,8 +27,4 @@
     <ProjectReference Include="..\VolunteerProject.Domain\VolunteerProject.Domain.csproj" />
   </ItemGroup>
 
-  <ItemGroup>
-    <Folder Include="Repositoriy\Interface\" />
-  </ItemGroup>
-
 </Project>
