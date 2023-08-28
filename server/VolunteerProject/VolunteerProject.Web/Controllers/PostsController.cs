@@ -33,6 +33,13 @@ namespace VolunteerProject.Web.Controllers
             return this.GetResponse(postByTitle);
         }
 
+        [HttpGet("GetAllPostsByUserName")]
+        public async Task<IActionResult> GetAllPostByUserName(string userName)
+        {
+            var postByUserName = await _postService.GetAllPostByUserName(userName);
+            return this.GetResponse(postByUserName);
+        }
+
         [HttpPost("AddPost")]
         public async Task<IActionResult> AddNewPost([FromBody] AddPostRequest newPost)
         {

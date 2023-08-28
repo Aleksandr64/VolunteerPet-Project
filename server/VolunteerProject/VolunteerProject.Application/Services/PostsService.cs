@@ -1,4 +1,5 @@
-﻿using System;
+﻿using Microsoft.AspNetCore.Identity;
+using System;
 using System.Collections;
 using System.Collections.Generic;
 using System.Linq;
@@ -9,6 +10,8 @@ using VolunteerProject.Application.DTOs.PostDTOs.Request;
 using VolunteerProject.Application.DTOs.PostDTOs.Responce;
 using VolunteerProject.Application.Mappers;
 using VolunteerProject.Application.Services.Interface;
+using VolunteerProject.Domain.IdentityModels;
+using VolunteerProject.Domain.Models;
 using VolunteerProject.Domain.ResultModels;
 using VolunteerProject.Infrastructure.Repositoriy.Interface;
 
@@ -17,10 +20,15 @@ namespace VolunteerProject.Application.Services
     public class PostsService : IPostsService 
     {
         private readonly IPostRepositoriy _postRepositoriy;
+        private readonly UserManager<User> _userManager;
 
-        public PostsService(IPostRepositoriy postRepositotiy)
+        public PostsService(
+            IPostRepositoriy postRepositotiy, 
+            UserManager<User> userManager
+            )
         {
             _postRepositoriy = postRepositotiy;
+            _userManager = userManager;
         }
 
         public async Task<Result<IEnumerable<PostResponce>>> GetAllPosts()
@@ -32,40 +40,25 @@ namespace VolunteerProject.Application.Services
                 return new NotFoundResult<IEnumerable<PostResponce>>("Failed get all data from data base");
             }
 
-            var allPostsReturn = new List<PostResponce>();
-
-            foreach(var post in allPosts)
-            {
-                var postReturn = post.ToPostResponse();
-
-                allPostsReturn.Add(postReturn);
-            }
-
-            if(allPostsReturn == null)
-            {
-                return new NotFoundResult<IEnumerable<PostResponce>>("Failed create list with all posts");
-            }
+            var allPostsReturn = allPosts.Select(x => x.ToPostResponse());
 
             return new SuccessResult<IEnumerable<PostResponce>>(allPostsReturn);
         }
 
         public async Task<Result<PostResponce>> AddPost(AddPostRequest postData)
         {
-            var post = postData.ToPostAddRequest();
+            var user = await _userManager.FindByNameAsync(postData.UserName);
 
-            if(post == null)
+            if(user == null)
             {
-                return new NotFoundResult<PostResponce>(default!);
+                return new NotFoundResult<PostResponce>("Failed, User with this user name doesn't exist");
             }
+
+            var post = postData.ToPostAddRequest(user);
 
             var postCreate = await _postRepositoriy.CreatePost(post);
-            
-            if(postCreate != null)
-            {
-                return new SuccessResult<PostResponce>(postCreate.ToPostResponse());
-            }
 
-            return new NotFoundResult<PostResponce>("Error add in Data Base post!");
+            return new SuccessResult<PostResponce>(postCreate.ToPostResponse());
         }
 
         public async Task<Result<IEnumerable<PostResponce>>> GetPostByTitle(string titlePost)
@@ -77,33 +70,15 @@ namespace VolunteerProject.Application.Services
                 return new NotFoundResult<IEnumerable<PostResponce>>("Failed get data from data base");
             }
 
-            var postsReturn = new List<PostResponce>();
-
-            foreach (var post in postByTitle)
-            {
-                var postReturn = post.ToPostResponse();
-
-                postsReturn.Add(postReturn);
-            }
-
-            if (postsReturn == null)
-            {
-                return new NotFoundResult<IEnumerable<PostResponce>>("Failed create list with posts");
-            }
+            var postsReturn = postByTitle.Select(x => x.ToPostResponse());
 
             return new SuccessResult<IEnumerable<PostResponce>>(postsReturn);
         }
 
-        public async Task<Result<string>> DeletePost(Guid Id)
+        public async Task<Result<PostResponce>> DeletePost(Guid Id)
         {
-            var resultDeltePost = await _postRepositoriy.DeletePost(Id);
-
-            if(resultDeltePost == null)
-            {
-                return new NotFoundResult<string>("Failed delete post");
-            }
-
-            return new SuccessResult<string>(default!);
+            await _postRepositoriy.DeletePost(Id);
+            return new SuccessResult<PostResponce>(default!);
         }
 
         public async Task<Result<PostResponce>> ChangeOfDataPost(PutPostRequest changePost)
@@ -119,12 +94,28 @@ namespace VolunteerProject.Application.Services
 
             var responceChangePost = resultChangePost.ToPostResponse();
 
-            if(responceChangePost == null)
+            return new SuccessResult<PostResponce>(responceChangePost);
+        }
+
+        public async Task<Result<IEnumerable<PostResponce>>> GetAllPostByUserName(string userName)
+        {
+            var user = await _postRepositoriy.GetAllPostsByUserName(userName);
+
+            if(user == null)
             {
-                return new NotFoundResult<PostResponce>("Failed convert in models");
+                return new NotFoundResult<IEnumerable<PostResponce>>("User with this nickname was not found.");
+            }
+            
+            var postCollectionOfUserName = user.Posts.ToList();
+
+            if(!postCollectionOfUserName.Any())
+            {
+                return new NotFoundResult<IEnumerable<PostResponce>>("This user don't have Posts");
             }
 
-            return new SuccessResult<PostResponce>(responceChangePost);
+            var postByUserName = postCollectionOfUserName.Select(x => x.ToPostResponse());
+
+            return new SuccessResult<IEnumerable<PostResponce>>(postByUserName);
         }
     }
 }

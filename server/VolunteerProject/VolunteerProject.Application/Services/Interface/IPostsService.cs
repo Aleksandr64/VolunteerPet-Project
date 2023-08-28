@@ -15,7 +15,8 @@ namespace VolunteerProject.Application.Services.Interface
         public Task<Result<PostResponce>> AddPost(AddPostRequest postData);
         public Task<Result<IEnumerable<PostResponce>>> GetAllPosts();
         public Task<Result<IEnumerable<PostResponce>>> GetPostByTitle(string title);
-        public Task<Result<string>> DeletePost(Guid Id);
+        public Task<Result<PostResponce>> DeletePost(Guid Id);
         public Task<Result<PostResponce>> ChangeOfDataPost(PutPostRequest changePost);
+        public Task<Result<IEnumerable<PostResponce>>> GetAllPostByUserName(string userName);
     }
 }
