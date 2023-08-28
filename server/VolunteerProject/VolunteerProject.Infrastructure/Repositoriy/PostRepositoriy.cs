@@ -4,6 +4,7 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
+using VolunteerProject.Domain.IdentityModels;
 using VolunteerProject.Domain.Models;
 using VolunteerProject.Infrastructure.Context;
 using VolunteerProject.Infrastructure.Repositoriy.Interface;
@@ -21,13 +22,15 @@ namespace VolunteerProject.Infrastructure.Repositoriy
 
         public async Task<IEnumerable<Post>> GetAllPosts()
         {
-            var allPost = await _dbContext.Posts.ToListAsync();
+            var allPost = await _dbContext.Posts.Include(p => p.User).ToListAsync();
             return allPost;
         }
 
         public async Task<IEnumerable<Post>> GetPostsByTitle(string title)
         {
-            var postByTitle = await _dbContext.Posts.Where(p => p.Title.ToLower().Contains(title.ToLower())).ToListAsync();
+            var postByTitle = await _dbContext.Posts.Include(p => p.User)
+                .Where(p => p.Title.ToLower().Contains(title.ToLower()))
+                .ToListAsync();
             return postByTitle;
         }
 
@@ -35,39 +38,43 @@ namespace VolunteerProject.Infrastructure.Repositoriy
         {
             post.Id = Guid.NewGuid();
             post.CreateDate = DateTime.UtcNow;
-            var postEntity = await _dbContext.Posts.AddAsync(post);
+            await _dbContext.Posts.AddAsync(post);
             await SaveChanges();
-            return postEntity.Entity;
+            var postEntity = await _dbContext.Posts.Include(p => p.User)
+                .FirstOrDefaultAsync(p => p.Id == post.Id);
+            return postEntity;
         }
-        public async Task<string> DeletePost(Guid Id)
+        public async Task DeletePost(Guid Id)
         {
             var post = await _dbContext.Posts.FirstOrDefaultAsync(p => p.Id == Id);
+
             if(post == null)
             {
-                return default!;
+                return;
             }
-            _dbContext.Posts.Remove(post);
-            await SaveChanges();
-            return "Succeed delete publication";
-        }
 
+            _dbContext.Posts.Remove(post);
+
+            await SaveChanges();
+        }
+        
         public async Task<Post> ChangePost(Post post)
         {
-            var postEntity = await _dbContext.Posts.FirstOrDefaultAsync(e => e.Id == post.Id);
-            if(postEntity != null)
-            {
-                postEntity.Title = post.Title;
-                postEntity.Description = post.Description;
-                postEntity.UrlSocialNetwork = post.UrlSocialNetwork;
-                postEntity.UrlFundraisingAccount = post.UrlFundraisingAccount;
-                postEntity.ThisEventHaveEndDate = post.ThisEventHaveEndDate;
-                postEntity.EndDate = post.EndDate;
+            _dbContext.Posts.Update(post);
 
-                await SaveChanges();
+            await SaveChanges();
 
-                return postEntity;
-            }
-            return default!;
+            var postEntity = await _dbContext.Posts.Include(p => p.User)
+                .FirstOrDefaultAsync(p => p.Id == post.Id);
+
+            return postEntity;
+            
+        }
+        public async Task<User?> GetAllPostsByUserName(string userName)
+        {
+            var user = await _dbContext.Users.Include(e => e.Posts)
+                .FirstOrDefaultAsync(p => p.UserName == userName);
+            return user;
         }
 
         private async Task SaveChanges()

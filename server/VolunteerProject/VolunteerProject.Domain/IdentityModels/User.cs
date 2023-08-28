@@ -4,6 +4,7 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
+using VolunteerProject.Domain.Models;
 
 namespace VolunteerProject.Domain.IdentityModels
 {
@@ -11,5 +12,7 @@ namespace VolunteerProject.Domain.IdentityModels
     {
         public string? FirstName { get; set; }
         public string? LastName { get; set; }
+
+        public ICollection<Post> Posts { get; set; }
     }
 }
