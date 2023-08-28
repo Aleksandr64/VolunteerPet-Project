@@ -83,7 +83,14 @@ namespace VolunteerProject.Application.Services
 
         public async Task<Result<PostResponce>> ChangeOfDataPost(PutPostRequest changePost)
         {
-            var post = changePost.ToPostPutRequest();
+            var user = await _userManager.FindByNameAsync(changePost.UserName);
+
+            if (user == null)
+            {
+                return new NotFoundResult<PostResponce>("Failed, User with this user name doesn't exist");
+            }
+
+            var post = changePost.ToPostPutRequest(user);
 
             var resultChangePost = await _postRepositoriy.ChangePost(post);
 

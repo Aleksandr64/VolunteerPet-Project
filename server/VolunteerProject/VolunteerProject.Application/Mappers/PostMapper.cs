@@ -26,7 +26,7 @@ namespace VolunteerProject.Application.Mappers
                 UserId = user.Id
             };
         }
-        public static Post ToPostPutRequest(this PutPostRequest putPost)
+        public static Post ToPostPutRequest(this PutPostRequest putPost, User user)
         {
             return new Post
             {
@@ -37,6 +37,7 @@ namespace VolunteerProject.Application.Mappers
                 UrlFundraisingAccount = putPost.UrlFundraisingAccount,
                 ThisEventHaveEndDate = putPost.ThisEventHaveEndDate,
                 EndDate = putPost.EndDate,
+                UserId = user.Id
             };
         }
 

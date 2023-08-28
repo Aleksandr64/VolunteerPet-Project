@@ -15,5 +15,7 @@ namespace VolunteerProject.Application.DTOs.PostDTOs.Request
         public string UrlFundraisingAccount { get; set; }
         public bool ThisEventHaveEndDate { get; set; }
         public DateTime EndDate { get; set; }
+
+        public string UserName { get; set; }
     }
 }
