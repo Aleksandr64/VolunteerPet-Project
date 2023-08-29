@@ -20,12 +20,12 @@ namespace VolunteerProject.Application.Services
 {
     public class AuthService : IAuthService
     {
-        private readonly UserManager<User> _userManager;
+        private readonly UserManager<Users> _userManager;
         private readonly RoleManager<IdentityRole> _roleManager;
         private readonly IConfiguration _configuration;
 
         public AuthService(
-            UserManager<User> userManager,
+            UserManager<Users> userManager,
             RoleManager<IdentityRole> roleManager,
             IConfiguration configuration)
         {
@@ -98,14 +98,14 @@ namespace VolunteerProject.Application.Services
 
             var result = await _userManager.CreateAsync(user, userRegistration.Password);
 
-            if(!await _roleManager.RoleExistsAsync(UserRoles.User))
+            if(!await _roleManager.RoleExistsAsync(UserRolesData.User))
             {
-                await _roleManager.CreateAsync(new IdentityRole(UserRoles.User));
+                await _roleManager.CreateAsync(new IdentityRole(UserRolesData.User));
             }
 
-            if(await _roleManager.RoleExistsAsync(UserRoles.User))
+            if(await _roleManager.RoleExistsAsync(UserRolesData.User))
             {
-                await _userManager.AddToRoleAsync(user, UserRoles.User);
+                await _userManager.AddToRoleAsync(user, UserRolesData.User);
             }
 
             if (result.Succeeded)

@@ -20,11 +20,11 @@ namespace VolunteerProject.Application.Services
     public class PostsService : IPostsService 
     {
         private readonly IPostRepositoriy _postRepositoriy;
-        private readonly UserManager<User> _userManager;
+        private readonly UserManager<Users> _userManager;
 
         public PostsService(
             IPostRepositoriy postRepositotiy, 
-            UserManager<User> userManager
+            UserManager<Users> userManager
             )
         {
             _postRepositoriy = postRepositotiy;

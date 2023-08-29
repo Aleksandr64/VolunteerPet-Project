@@ -70,7 +70,7 @@ namespace VolunteerProject.Infrastructure.Repositoriy
             return postEntity;
             
         }
-        public async Task<User?> GetAllPostsByUserName(string userName)
+        public async Task<Users?> GetAllPostsByUserName(string userName)
         {
             var user = await _dbContext.Users.Include(e => e.Posts)
                 .FirstOrDefaultAsync(p => p.UserName == userName);

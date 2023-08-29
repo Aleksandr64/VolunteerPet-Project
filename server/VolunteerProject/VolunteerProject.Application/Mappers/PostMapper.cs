@@ -13,7 +13,7 @@ namespace VolunteerProject.Application.Mappers
 {
     public static class PostMapper
     {
-        public static Post ToPostAddRequest(this AddPostRequest addPost, User user)
+        public static Post ToPostAddRequest(this AddPostRequest addPost, Users user)
         {
             return new Post
             {
@@ -26,7 +26,7 @@ namespace VolunteerProject.Application.Mappers
                 UserId = user.Id
             };
         }
-        public static Post ToPostPutRequest(this PutPostRequest putPost, User user)
+        public static Post ToPostPutRequest(this PutPostRequest putPost, Users user)
         {
             return new Post
             {

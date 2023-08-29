@@ -18,17 +18,6 @@ builder.Services.AddDbContext<VolunteerDbContext>(options =>
     options.UseSqlServer(builder.Configuration.GetConnectionString("DefaoultConnectionString"));
 });
 
-builder.Services.AddIdentity<User, IdentityRole>(o =>
-{
-    o.Password.RequireDigit = false;
-    o.Password.RequireLowercase = false;
-    o.Password.RequireUppercase = false;
-    o.Password.RequireNonAlphanumeric = false;
-    o.User.RequireUniqueEmail = true;
-})
-.AddEntityFrameworkStores<VolunteerDbContext>()
-.AddDefaultTokenProviders();
-
 builder.Services.AddAuthentication(opt => 
 {
     opt.DefaultAuthenticateScheme = JwtBearerDefaults.AuthenticationScheme;

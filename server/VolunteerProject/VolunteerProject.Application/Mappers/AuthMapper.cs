@@ -10,9 +10,9 @@ namespace VolunteerProject.Application.Mappers
 {
     public static class AuthMapper
     {
-        public static User ToUser(this UserRegistrationRequest userRegister)
+        public static Users ToUser(this UserRegistrationRequest userRegister)
         {
-            return new User 
+            return new Users 
             { 
                 LastName = userRegister.LastName,
                 FirstName = userRegister.FirstName,

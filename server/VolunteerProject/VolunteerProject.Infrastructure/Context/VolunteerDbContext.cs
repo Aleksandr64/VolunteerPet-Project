@@ -11,7 +11,7 @@ using VolunteerProject.Domain.Models;
 
 namespace VolunteerProject.Infrastructure.Context
 {
-    public class VolunteerDbContext : IdentityDbContext<User>
+    public class VolunteerDbContext : DbContext
     {
         public VolunteerDbContext(
             DbContextOptions<VolunteerDbContext> options) 
@@ -22,12 +22,11 @@ namespace VolunteerProject.Infrastructure.Context
         protected override void OnModelCreating(ModelBuilder modelBuilder)
         {
             base.OnModelCreating(modelBuilder);
-
-            //modelBuilder.Ignore<IdentityUserClaim<string>>();
-            //modelBuilder.Ignore<IdentityUserLogin<string>>();
-            //modelBuilder.Ignore<IdentityRoleClaim<string>>();
         }
 
         public DbSet<Post> Posts { get; set; }
+        public DbSet<Users> Users { get; set; }
+        public DbSet<Roles> Roles { get; set; }
+        public DbSet<User_Role> User_Role { get; set; }
     }
 }

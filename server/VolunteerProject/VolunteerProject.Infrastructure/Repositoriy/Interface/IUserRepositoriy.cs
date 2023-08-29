@@ -9,6 +9,6 @@ namespace VolunteerProject.Infrastructure.Repositoriy.Interface
 {
     public interface IUserRepositoriy
     {
-        public Task<IEnumerable<User>> GetUsersByUserName(string userName);
+        public Task<IEnumerable<Users>> GetUsersByUserName(string userName);
     }
 }

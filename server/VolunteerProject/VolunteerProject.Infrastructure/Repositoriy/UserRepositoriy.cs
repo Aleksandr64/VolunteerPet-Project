@@ -18,7 +18,7 @@ namespace VolunteerProject.Infrastructure.Repositoriy
         {
             _dbContext = dbContext;
         }
-        public async Task<IEnumerable<User>> GetUsersByUserName(string userName)
+        public async Task<IEnumerable<Users>> GetUsersByUserName(string userName)
         {
             var allUserByUserName = await _dbContext.Users
                 .Where(p => p.UserName.Contains(userName))

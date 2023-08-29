@@ -18,6 +18,6 @@ namespace VolunteerProject.Domain.ResultModels
 
         public override List<string> Errors => new List<string>() { _error ?? "Error entity was empty" };
 
-        public override T Data => default;
+        public override T Data => default!;
     }
 }
