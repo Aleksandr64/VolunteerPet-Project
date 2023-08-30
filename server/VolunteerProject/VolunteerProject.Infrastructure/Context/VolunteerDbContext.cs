@@ -27,6 +27,5 @@ namespace VolunteerProject.Infrastructure.Context
         public DbSet<Post> Posts { get; set; }
         public DbSet<Users> Users { get; set; }
         public DbSet<Roles> Roles { get; set; }
-        public DbSet<User_Role> User_Role { get; set; }
     }
 }

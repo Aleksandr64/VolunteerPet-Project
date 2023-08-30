@@ -45,9 +45,9 @@ builder.Services.AddScoped<IPostsService, PostsService>();
 builder.Services.AddScoped<IUserService, UserService>();
 builder.Services.AddScoped<IUserRepositoriy, UserRepositoriy>();
 builder.Services.AddScoped<IPostRepositoriy, PostRepositoriy>();
+builder.Services.AddScoped<IAuthRepositoriy, AuthRepositoriy>();
 
 builder.Services.AddControllers();
-// Learn more about configuring Swagger/OpenAPI at https://aka.ms/aspnetcore/swashbuckle
 builder.Services.AddEndpointsApiExplorer();
 builder.Services.AddSwaggerGen();
 
@@ -62,8 +62,23 @@ if (app.Environment.IsDevelopment())
 
 using(var scope = app.Services.CreateScope())
 {
-    var dbContext = scope.ServiceProvider.GetRequiredService<VolunteerDbContext>();
+    var service = scope.ServiceProvider;
+    var dbContext = service.GetRequiredService<VolunteerDbContext>();
     dbContext.Database.Migrate();
+    if (dbContext.Roles.Any())
+    {
+        dbContext.Roles.AddRange(
+        new Roles()
+        {
+            Id = Guid.NewGuid(),
+            Name = UserRolesData.User
+        },
+        new Roles()
+        {
+            Id = Guid.NewGuid(),
+            Name = UserRolesData.Admin
+        });
+    }
 }
 
 app.UseRouting();
