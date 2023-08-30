@@ -10,6 +10,7 @@ using System.Security.Claims;
 using System.Security.Cryptography;
 using System.Text;
 using System.Threading.Tasks;
+using VolunteerProject.Application.DTOs.AuthDTOs;
 using VolunteerProject.Application.DTOs.AuthDTOs.Request;
 using VolunteerProject.Application.Mappers;
 using VolunteerProject.Application.Services.Interface;
@@ -17,6 +18,7 @@ using VolunteerProject.Domain.IdentityModels;
 using VolunteerProject.Domain.ResultModels;
 using VolunteerProject.Infrastructure.Context;
 using VolunteerProject.Infrastructure.Repositoriy.Interface;
+using System.Security.Cryptography;
 
 namespace VolunteerProject.Application.Services
 {
@@ -35,32 +37,26 @@ namespace VolunteerProject.Application.Services
 
         public async Task<Result<string>> LoginUser(UserLogingRequest userLoging)
         {
-            var user = await _userManager.FindByNameAsync(userLoging.UserName);
+            var user = await _authRepositoriy.FindByNameAsync(userLoging.UserName);
 
-            if (user == null)
+            if (user.UserName != userLoging.UserName)
             {
                 return new NotFoundResult<string>("There is no user with this Username");
             }
 
-            var userPasswordCheck = await _userManager.CheckPasswordAsync(user, userLoging.Password); 
+            var userPasswordCheck = VerifyPassword(userLoging.Password, user.PasswordHash, user.PasswordSalt);
             
             if(!userPasswordCheck)
             {
                 return new NotFoundResult<string>("This password is not correct");
             }
 
-            var userRoles = await _userManager.GetRolesAsync(user);
-
             var authClaims = new List<Claim>
             {
                 new Claim(ClaimTypes.Name, user.UserName),
+                new Claim(ClaimTypes.Role, user.Role.Name),
                 new Claim(JwtRegisteredClaimNames.Jti, Guid.NewGuid().ToString())
             };
-
-            foreach(var userRole in userRoles)
-            {
-                authClaims.Add(new Claim(ClaimTypes.Role, userRole));
-            }
 
             var token = GenerateToken(authClaims);
 
@@ -74,14 +70,14 @@ namespace VolunteerProject.Application.Services
 
         public async Task<Result<string>> RegisterUser(UserRegistrationRequest userRegistration)
         {
-            var userNameCheck = await _authRepositoriy.FindByNameAsync(userRegistration.UserName);
+            var userNameCheck = await _authRepositoriy.CheckByNameAsync(userRegistration.UserName);
 
             if(userNameCheck)
             {
                 return new NotFoundResult<string>("A User with such a Username exists");
             }
 
-            var userEmailCheck = await _authRepositoriy.FindByEmailAsync(userRegistration.Email);
+            var userEmailCheck = await _authRepositoriy.CheckByEmailAsync(userRegistration.Email);
 
             if(userEmailCheck)
             {
@@ -90,21 +86,11 @@ namespace VolunteerProject.Application.Services
 
             var password = HashPaswordCreate(userRegistration.Password);
 
-            var user = userRegistration.ToUser(password.Hash, password.Salt);
+            var user = userRegistration.ToUser(password);
 
-            var result = await _authRepositoriy.CreateAsync(user);
+            var result = await _authRepositoriy.CreateUserAsync(user, UserRolesData.User);
 
-            if(!await _roleManager.RoleExistsAsync(UserRolesData.User))
-            {
-                await _roleManager.CreateAsync(new IdentityRole(UserRolesData.User));
-            }
-
-            if(await _roleManager.RoleExistsAsync(UserRolesData.User))
-            {
-                await _userManager.AddToRoleAsync(user, UserRolesData.User);
-            }
-
-            if (result.Succeeded)
+            if (result != null)
             {
                 return new SuccessResult<string>(default!);
             }
@@ -112,7 +98,7 @@ namespace VolunteerProject.Application.Services
             return new NotFoundResult<string>("Failer register user");
         }
 
-        private JwtSecurityToken GenerateToken(List<Claim> authClaims, bool isRefreshToken = false)
+        private JwtSecurityToken GenerateToken(List<Claim> authClaims)
         {
             var authSigningKey = new SymmetricSecurityKey(Encoding.UTF8.GetBytes(_configuration["Jwt:Key"]));
 
@@ -127,7 +113,7 @@ namespace VolunteerProject.Application.Services
             return token;
         }
 
-        private (string Hash, string Salt) HashPaswordCreate(string password)
+        private Password HashPaswordCreate(string password)
         {
             const int keySize = 64;
             const int iterations = 350000;
@@ -143,7 +129,21 @@ namespace VolunteerProject.Application.Services
                 hashAlgorithm,
                 keySize); 
 
-            return ( Convert.ToHexString(hash), Convert.ToHexString(salt));
+            return new Password() 
+            { 
+                hashPassword = Convert.ToHexString(hash),
+                saltPassword = Convert.ToHexString(salt)
+            };
+        }
+        private bool VerifyPassword(string password, string hash, string salt)
+        {
+            const int keySize = 64;
+            const int iterations = 350000;
+            HashAlgorithmName hashAlgorithm = HashAlgorithmName.SHA512;
+            var saltByte = Convert.FromHexString(salt);
+            var hashToCompare = Rfc2898DeriveBytes.Pbkdf2(password, saltByte, iterations, hashAlgorithm, keySize);
+
+            return CryptographicOperations.FixedTimeEquals(hashToCompare, Convert.FromHexString(hash));
         }
     }
 }

@@ -65,7 +65,7 @@ using(var scope = app.Services.CreateScope())
     var service = scope.ServiceProvider;
     var dbContext = service.GetRequiredService<VolunteerDbContext>();
     dbContext.Database.Migrate();
-    if (dbContext.Roles.Any())
+    if (!dbContext.Roles.Any())
     {
         dbContext.Roles.AddRange(
         new Roles()
@@ -78,6 +78,7 @@ using(var scope = app.Services.CreateScope())
             Id = Guid.NewGuid(),
             Name = UserRolesData.Admin
         });
+        dbContext.SaveChanges();
     }
 }
 

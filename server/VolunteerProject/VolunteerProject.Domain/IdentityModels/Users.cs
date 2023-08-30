@@ -20,9 +20,9 @@ namespace VolunteerProject.Domain.IdentityModels
         public string PhoneNumber { get; set; } = string.Empty;
 
         public Guid RoleId { get; set; }
-        public Roles ?Role { get; set; }
+        public Roles? Role { get; set; }
 
-        public ICollection<Post> ?Posts { get; set; }
+        public ICollection<Post>? Posts { get; set; }
 
         
     }

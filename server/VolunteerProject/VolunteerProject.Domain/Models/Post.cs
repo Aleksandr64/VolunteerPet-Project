@@ -19,7 +19,7 @@ namespace VolunteerProject.Domain.Models
         public bool ThisEventHaveEndDate { get; set; } 
         public DateTime EndDate { get; set; }
 
-        public string UserId { get; set; } = string.Empty;
-        public Users ?User { get; set; }
+        public Guid UserId { get; set; } 
+        public Users? User { get; set; }
     }
 }

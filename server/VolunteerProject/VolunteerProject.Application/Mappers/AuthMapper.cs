@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
+using VolunteerProject.Application.DTOs.AuthDTOs;
 using VolunteerProject.Application.DTOs.AuthDTOs.Request;
 using VolunteerProject.Domain.IdentityModels;
 
@@ -10,7 +11,7 @@ namespace VolunteerProject.Application.Mappers
 {
     public static class AuthMapper
     {
-        public static Users ToUser(this UserRegistrationRequest userRegister, string hashPassword, string saltPassword)
+        public static Users ToUser(this UserRegistrationRequest userRegister, Password password)
         {
             return new Users 
             { 
@@ -18,8 +19,8 @@ namespace VolunteerProject.Application.Mappers
                 FirstName = userRegister.FirstName,
                 UserName = userRegister.UserName,
                 Email = userRegister.Email,
-                PasswordHash = hashPassword,
-                PasswordSalt = saltPassword,
+                PasswordHash = password.hashPassword,
+                PasswordSalt = password.saltPassword,
                 PhoneNumber = userRegister.PhoneNumber,
             };
         }
