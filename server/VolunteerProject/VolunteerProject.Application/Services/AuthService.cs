@@ -7,6 +7,7 @@ using System.Collections.Generic;
 using System.IdentityModel.Tokens.Jwt;
 using System.Linq;
 using System.Security.Claims;
+using System.Security.Cryptography;
 using System.Text;
 using System.Threading.Tasks;
 using VolunteerProject.Application.DTOs.AuthDTOs.Request;
@@ -15,22 +16,20 @@ using VolunteerProject.Application.Services.Interface;
 using VolunteerProject.Domain.IdentityModels;
 using VolunteerProject.Domain.ResultModels;
 using VolunteerProject.Infrastructure.Context;
+using VolunteerProject.Infrastructure.Repositoriy.Interface;
 
 namespace VolunteerProject.Application.Services
 {
     public class AuthService : IAuthService
     {
-        private readonly UserManager<Users> _userManager;
-        private readonly RoleManager<IdentityRole> _roleManager;
+        private readonly IAuthRepositoriy _authRepositoriy;
         private readonly IConfiguration _configuration;
 
         public AuthService(
-            UserManager<Users> userManager,
-            RoleManager<IdentityRole> roleManager,
+            IAuthRepositoriy authRepositoriy,
             IConfiguration configuration)
         {
-            _userManager = userManager;
-            _roleManager = roleManager;
+            _authRepositoriy = authRepositoriy;
             _configuration = configuration;
         }
 
@@ -75,28 +74,25 @@ namespace VolunteerProject.Application.Services
 
         public async Task<Result<string>> RegisterUser(UserRegistrationRequest userRegistration)
         {
-            var userNameCheck = await _userManager.FindByNameAsync(userRegistration.UserName);
+            var userNameCheck = await _authRepositoriy.FindByNameAsync(userRegistration.UserName);
 
-            if(userNameCheck != null)
+            if(userNameCheck)
             {
                 return new NotFoundResult<string>("A User with such a Username exists");
             }
 
-            var userEmailCheck = await _userManager.FindByEmailAsync(userRegistration.Email);
+            var userEmailCheck = await _authRepositoriy.FindByEmailAsync(userRegistration.Email);
 
-            if(userEmailCheck != null)
+            if(userEmailCheck)
             {
                 return new NotFoundResult<string>("A User with such a Email exists");
             }
 
-            var user = userRegistration.ToUser();
+            var password = HashPaswordCreate(userRegistration.Password);
 
-            if (user == null) 
-            {
-                return new NotFoundResult<string>("Failled create entity User.");
-            }
+            var user = userRegistration.ToUser(password.Hash, password.Salt);
 
-            var result = await _userManager.CreateAsync(user, userRegistration.Password);
+            var result = await _authRepositoriy.CreateAsync(user);
 
             if(!await _roleManager.RoleExistsAsync(UserRolesData.User))
             {
@@ -110,7 +106,7 @@ namespace VolunteerProject.Application.Services
 
             if (result.Succeeded)
             {
-                return new SuccessResult<string>(default);
+                return new SuccessResult<string>(default!);
             }
 
             return new NotFoundResult<string>("Failer register user");
@@ -129,6 +125,25 @@ namespace VolunteerProject.Application.Services
             );
 
             return token;
+        }
+
+        private (string Hash, string Salt) HashPaswordCreate(string password)
+        {
+            const int keySize = 64;
+            const int iterations = 350000;
+            HashAlgorithmName hashAlgorithm = HashAlgorithmName.SHA512;
+
+            var salt = RandomNumberGenerator.GetBytes(keySize);
+            var bytePassword = Encoding.UTF8.GetBytes(password);
+
+            var hash = Rfc2898DeriveBytes.Pbkdf2(
+                bytePassword,
+                salt,
+                iterations,
+                hashAlgorithm,
+                keySize); 
+
+            return ( Convert.ToHexString(hash), Convert.ToHexString(salt));
         }
     }
 }

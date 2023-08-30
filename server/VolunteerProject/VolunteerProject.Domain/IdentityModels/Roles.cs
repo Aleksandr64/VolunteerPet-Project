@@ -11,6 +11,6 @@ namespace VolunteerProject.Domain.IdentityModels
         public Guid Id { get; set; }
         public string Name { get; set; } = string.Empty;
 
-        public ICollection<Users> ?Users { get; set; }
+        public ICollection<Users>? Users { get; set; }
     }
 }
