@@ -10,7 +10,6 @@ using VolunteerProject.Application.DTOs.PostDTOs.Request;
 using VolunteerProject.Application.DTOs.PostDTOs.Responce;
 using VolunteerProject.Application.Mappers;
 using VolunteerProject.Application.Services.Interface;
-using VolunteerProject.Domain.IdentityModels;
 using VolunteerProject.Domain.Models;
 using VolunteerProject.Domain.ResultModels;
 using VolunteerProject.Infrastructure.Repositoriy.Interface;
@@ -20,15 +19,15 @@ namespace VolunteerProject.Application.Services
     public class PostsService : IPostsService 
     {
         private readonly IPostRepositoriy _postRepositoriy;
-        private readonly UserManager<User> _userManager;
+        private readonly IAuthRepositoriy _authRepositoriy;
 
         public PostsService(
-            IPostRepositoriy postRepositotiy, 
-            UserManager<User> userManager
+            IPostRepositoriy postRepositotiy,
+            IAuthRepositoriy authRepositoriy
             )
         {
             _postRepositoriy = postRepositotiy;
-            _userManager = userManager;
+            _authRepositoriy = authRepositoriy;
         }
 
         public async Task<Result<IEnumerable<PostResponce>>> GetAllPosts()
@@ -47,7 +46,7 @@ namespace VolunteerProject.Application.Services
 
         public async Task<Result<PostResponce>> AddPost(AddPostRequest postData)
         {
-            var user = await _userManager.FindByNameAsync(postData.UserName);
+            var user = await _authRepositoriy.FindByNameAsync(postData.UserName);
 
             if(user == null)
             {
@@ -83,7 +82,7 @@ namespace VolunteerProject.Application.Services
 
         public async Task<Result<PostResponce>> ChangeOfDataPost(PutPostRequest changePost)
         {
-            var user = await _userManager.FindByNameAsync(changePost.UserName);
+            var user = await _authRepositoriy.FindByNameAsync(changePost.UserName);
 
             if (user == null)
             {

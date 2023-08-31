@@ -3,12 +3,12 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
-using VolunteerProject.Domain.IdentityModels;
+using VolunteerProject.Domain.Models;
 
 namespace VolunteerProject.Infrastructure.Repositoriy.Interface
 {
     public interface IUserRepositoriy
     {
-        public Task<IEnumerable<User>> GetUsersByUserName(string userName);
+        public Task<IEnumerable<Users>> GetUsersByUserName(string userName);
     }
 }

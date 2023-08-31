@@ -7,61 +7,55 @@ using System.Collections.Generic;
 using System.IdentityModel.Tokens.Jwt;
 using System.Linq;
 using System.Security.Claims;
+using System.Security.Cryptography;
 using System.Text;
 using System.Threading.Tasks;
+using VolunteerProject.Application.DTOs.AuthDTOs;
 using VolunteerProject.Application.DTOs.AuthDTOs.Request;
 using VolunteerProject.Application.Mappers;
 using VolunteerProject.Application.Services.Interface;
-using VolunteerProject.Domain.IdentityModels;
 using VolunteerProject.Domain.ResultModels;
 using VolunteerProject.Infrastructure.Context;
+using VolunteerProject.Infrastructure.Repositoriy.Interface;
+using System.Security.Cryptography;
+using VolunteerProject.Domain.Models;
 
 namespace VolunteerProject.Application.Services
 {
     public class AuthService : IAuthService
     {
-        private readonly UserManager<User> _userManager;
-        private readonly RoleManager<IdentityRole> _roleManager;
+        private readonly IAuthRepositoriy _authRepositoriy;
         private readonly IConfiguration _configuration;
 
         public AuthService(
-            UserManager<User> userManager,
-            RoleManager<IdentityRole> roleManager,
+            IAuthRepositoriy authRepositoriy,
             IConfiguration configuration)
         {
-            _userManager = userManager;
-            _roleManager = roleManager;
+            _authRepositoriy = authRepositoriy;
             _configuration = configuration;
         }
 
         public async Task<Result<string>> LoginUser(UserLogingRequest userLoging)
         {
-            var user = await _userManager.FindByNameAsync(userLoging.UserName);
+            var user = await _authRepositoriy.FindByNameAsync(userLoging.UserName);
 
-            if (user == null)
+            if (user.UserName != userLoging.UserName)
             {
                 return new NotFoundResult<string>("There is no user with this Username");
             }
 
-            var userPasswordCheck = await _userManager.CheckPasswordAsync(user, userLoging.Password); 
+            var userPasswordCheck = VerifyPassword(userLoging.Password, user.PasswordHash, user.PasswordSalt);
             
             if(!userPasswordCheck)
             {
                 return new NotFoundResult<string>("This password is not correct");
             }
 
-            var userRoles = await _userManager.GetRolesAsync(user);
-
             var authClaims = new List<Claim>
             {
                 new Claim(ClaimTypes.Name, user.UserName),
-                new Claim(JwtRegisteredClaimNames.Jti, Guid.NewGuid().ToString())
+                new Claim(ClaimTypes.Role, Enum.GetName(typeof(UserRolesEnum), user.Role))
             };
-
-            foreach(var userRole in userRoles)
-            {
-                authClaims.Add(new Claim(ClaimTypes.Role, userRole));
-            }
 
             var token = GenerateToken(authClaims);
 
@@ -75,48 +69,35 @@ namespace VolunteerProject.Application.Services
 
         public async Task<Result<string>> RegisterUser(UserRegistrationRequest userRegistration)
         {
-            var userNameCheck = await _userManager.FindByNameAsync(userRegistration.UserName);
+            var userNameCheck = await _authRepositoriy.CheckByNameAsync(userRegistration.UserName);
 
-            if(userNameCheck != null)
+            if(userNameCheck)
             {
                 return new NotFoundResult<string>("A User with such a Username exists");
             }
 
-            var userEmailCheck = await _userManager.FindByEmailAsync(userRegistration.Email);
+            var userEmailCheck = await _authRepositoriy.CheckByEmailAsync(userRegistration.Email);
 
-            if(userEmailCheck != null)
+            if(userEmailCheck)
             {
                 return new NotFoundResult<string>("A User with such a Email exists");
             }
 
-            var user = userRegistration.ToUser();
+            var password = HashPaswordCreate(userRegistration.Password);
 
-            if (user == null) 
+            var user = userRegistration.ToUser(password, UserRolesEnum.User);
+
+            var result = await _authRepositoriy.CreateUserAsync(user);
+
+            if (result != null)
             {
-                return new NotFoundResult<string>("Failled create entity User.");
-            }
-
-            var result = await _userManager.CreateAsync(user, userRegistration.Password);
-
-            if(!await _roleManager.RoleExistsAsync(UserRoles.User))
-            {
-                await _roleManager.CreateAsync(new IdentityRole(UserRoles.User));
-            }
-
-            if(await _roleManager.RoleExistsAsync(UserRoles.User))
-            {
-                await _userManager.AddToRoleAsync(user, UserRoles.User);
-            }
-
-            if (result.Succeeded)
-            {
-                return new SuccessResult<string>(default);
+                return new SuccessResult<string>(default!);
             }
 
             return new NotFoundResult<string>("Failer register user");
         }
 
-        private JwtSecurityToken GenerateToken(List<Claim> authClaims, bool isRefreshToken = false)
+        private JwtSecurityToken GenerateToken(List<Claim> authClaims)
         {
             var authSigningKey = new SymmetricSecurityKey(Encoding.UTF8.GetBytes(_configuration["Jwt:Key"]));
 
@@ -129,6 +110,39 @@ namespace VolunteerProject.Application.Services
             );
 
             return token;
+        }
+
+        private Password HashPaswordCreate(string password)
+        {
+            const int keySize = 64;
+            const int iterations = 350000;
+            HashAlgorithmName hashAlgorithm = HashAlgorithmName.SHA512;
+
+            var salt = RandomNumberGenerator.GetBytes(keySize);
+            var bytePassword = Encoding.UTF8.GetBytes(password);
+
+            var hash = Rfc2898DeriveBytes.Pbkdf2(
+                bytePassword,
+                salt,
+                iterations,
+                hashAlgorithm,
+                keySize); 
+
+            return new Password() 
+            { 
+                hashPassword = Convert.ToHexString(hash),
+                saltPassword = Convert.ToHexString(salt)
+            };
+        }
+        private bool VerifyPassword(string password, string hash, string salt)
+        {
+            const int keySize = 64;
+            const int iterations = 350000;
+            HashAlgorithmName hashAlgorithm = HashAlgorithmName.SHA512;
+            var saltByte = Convert.FromHexString(salt);
+            var hashToCompare = Rfc2898DeriveBytes.Pbkdf2(password, saltByte, iterations, hashAlgorithm, keySize);
+
+            return CryptographicOperations.FixedTimeEquals(hashToCompare, Convert.FromHexString(hash));
         }
     }
 }

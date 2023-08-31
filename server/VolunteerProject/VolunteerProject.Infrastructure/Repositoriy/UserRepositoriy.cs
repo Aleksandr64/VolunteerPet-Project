@@ -4,7 +4,7 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
-using VolunteerProject.Domain.IdentityModels;
+using VolunteerProject.Domain.Models;
 using VolunteerProject.Infrastructure.Context;
 using VolunteerProject.Infrastructure.Repositoriy.Interface;
 
@@ -18,7 +18,7 @@ namespace VolunteerProject.Infrastructure.Repositoriy
         {
             _dbContext = dbContext;
         }
-        public async Task<IEnumerable<User>> GetUsersByUserName(string userName)
+        public async Task<IEnumerable<Users>> GetUsersByUserName(string userName)
         {
             var allUserByUserName = await _dbContext.Users
                 .Where(p => p.UserName.Contains(userName))

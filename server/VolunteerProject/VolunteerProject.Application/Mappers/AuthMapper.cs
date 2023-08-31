@@ -3,23 +3,26 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
+using VolunteerProject.Application.DTOs.AuthDTOs;
 using VolunteerProject.Application.DTOs.AuthDTOs.Request;
-using VolunteerProject.Domain.IdentityModels;
+using VolunteerProject.Domain.Models;
 
 namespace VolunteerProject.Application.Mappers
 {
     public static class AuthMapper
     {
-        public static User ToUser(this UserRegistrationRequest userRegister)
+        public static Users ToUser(this UserRegistrationRequest userRegister, Password password, UserRolesEnum role)
         {
-            return new User 
+            return new Users 
             { 
                 LastName = userRegister.LastName,
                 FirstName = userRegister.FirstName,
-                Email = userRegister.Email,
                 UserName = userRegister.UserName,
-                PasswordHash = userRegister.Password,
+                Email = userRegister.Email,
+                PasswordHash = password.hashPassword,
+                PasswordSalt = password.saltPassword,
                 PhoneNumber = userRegister.PhoneNumber,
+                Role = role
             };
         }
     }

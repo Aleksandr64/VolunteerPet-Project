@@ -5,7 +5,7 @@ using Microsoft.IdentityModel.Tokens;
 using System.Text;
 using VolunteerProject.Application.Services;
 using VolunteerProject.Application.Services.Interface;
-using VolunteerProject.Domain.IdentityModels;
+using VolunteerProject.Domain.Models;
 using VolunteerProject.Infrastructure.Context;
 using VolunteerProject.Infrastructure.Repositoriy;
 using VolunteerProject.Infrastructure.Repositoriy.Interface;
@@ -17,17 +17,6 @@ builder.Services.AddDbContext<VolunteerDbContext>(options =>
 {
     options.UseSqlServer(builder.Configuration.GetConnectionString("DefaoultConnectionString"));
 });
-
-builder.Services.AddIdentity<User, IdentityRole>(o =>
-{
-    o.Password.RequireDigit = false;
-    o.Password.RequireLowercase = false;
-    o.Password.RequireUppercase = false;
-    o.Password.RequireNonAlphanumeric = false;
-    o.User.RequireUniqueEmail = true;
-})
-.AddEntityFrameworkStores<VolunteerDbContext>()
-.AddDefaultTokenProviders();
 
 builder.Services.AddAuthentication(opt => 
 {
@@ -56,9 +45,9 @@ builder.Services.AddScoped<IPostsService, PostsService>();
 builder.Services.AddScoped<IUserService, UserService>();
 builder.Services.AddScoped<IUserRepositoriy, UserRepositoriy>();
 builder.Services.AddScoped<IPostRepositoriy, PostRepositoriy>();
+builder.Services.AddScoped<IAuthRepositoriy, AuthRepositoriy>();
 
 builder.Services.AddControllers();
-// Learn more about configuring Swagger/OpenAPI at https://aka.ms/aspnetcore/swashbuckle
 builder.Services.AddEndpointsApiExplorer();
 builder.Services.AddSwaggerGen();
 
@@ -73,7 +62,8 @@ if (app.Environment.IsDevelopment())
 
 using(var scope = app.Services.CreateScope())
 {
-    var dbContext = scope.ServiceProvider.GetRequiredService<VolunteerDbContext>();
+    var service = scope.ServiceProvider;
+    var dbContext = service.GetRequiredService<VolunteerDbContext>();
     dbContext.Database.Migrate();
 }
 
