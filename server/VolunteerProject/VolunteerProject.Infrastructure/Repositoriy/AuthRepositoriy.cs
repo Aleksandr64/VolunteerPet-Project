@@ -5,7 +5,7 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
-using VolunteerProject.Domain.IdentityModels;
+using VolunteerProject.Domain.Models;
 using VolunteerProject.Infrastructure.Context;
 using VolunteerProject.Infrastructure.Repositoriy.Interface;
 
@@ -22,10 +22,9 @@ namespace VolunteerProject.Infrastructure.Repositoriy
 
         public async Task<Users> FindByNameAsync(string userName)
         {
-            var user = await _dbContext.Users
-                .Include(x => x.Role)
-                .FirstOrDefaultAsync(x => x.UserName == userName);
+            var user = await _dbContext.Users.FirstOrDefaultAsync(x => x.UserName == userName);
             return user;
+            
         }
 
         public async Task<bool> CheckByNameAsync(string userName)
@@ -40,11 +39,8 @@ namespace VolunteerProject.Infrastructure.Repositoriy
             return emailExist;
         }
 
-        public async Task<Users> CreateUserAsync(Users user, string roleName)
+        public async Task<Users> CreateUserAsync(Users user)
         {
-            user.Id = Guid.NewGuid();
-            var role = await _dbContext.Roles.FirstOrDefaultAsync(x => x.Name == roleName);
-            user.RoleId = role.Id;
             var result = await _dbContext.Users.AddAsync(user);
             await SaveChanges();
             return result.Entity; 

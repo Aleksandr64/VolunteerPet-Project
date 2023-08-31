@@ -4,7 +4,7 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
-using VolunteerProject.Domain.IdentityModels;
+using VolunteerProject.Domain.Models;
 
 namespace VolunteerProject.Infrastructure.Repositoriy.Interface
 {
@@ -13,6 +13,6 @@ namespace VolunteerProject.Infrastructure.Repositoriy.Interface
         public Task<Users> FindByNameAsync(string name);
         public Task<bool> CheckByNameAsync(string name);
         public Task<bool> CheckByEmailAsync(string email);
-        public Task<Users> CreateUserAsync(Users user, string role);
+        public Task<Users> CreateUserAsync(Users user);
     }
 }

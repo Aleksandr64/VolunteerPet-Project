@@ -6,7 +6,6 @@ using System.Threading.Tasks;
 using VolunteerProject.Application.DTOs.PostDTOs;
 using VolunteerProject.Application.DTOs.PostDTOs.Request;
 using VolunteerProject.Application.DTOs.PostDTOs.Responce;
-using VolunteerProject.Domain.IdentityModels;
 using VolunteerProject.Domain.Models;
 
 namespace VolunteerProject.Application.Mappers

@@ -5,13 +5,13 @@ using System.Text;
 using System.Threading.Tasks;
 using VolunteerProject.Application.DTOs.AuthDTOs;
 using VolunteerProject.Application.DTOs.AuthDTOs.Request;
-using VolunteerProject.Domain.IdentityModels;
+using VolunteerProject.Domain.Models;
 
 namespace VolunteerProject.Application.Mappers
 {
     public static class AuthMapper
     {
-        public static Users ToUser(this UserRegistrationRequest userRegister, Password password)
+        public static Users ToUser(this UserRegistrationRequest userRegister, Password password, UserRolesEnum role)
         {
             return new Users 
             { 
@@ -22,6 +22,7 @@ namespace VolunteerProject.Application.Mappers
                 PasswordHash = password.hashPassword,
                 PasswordSalt = password.saltPassword,
                 PhoneNumber = userRegister.PhoneNumber,
+                Role = role
             };
         }
     }

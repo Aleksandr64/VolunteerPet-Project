@@ -4,7 +4,6 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
-using VolunteerProject.Domain.IdentityModels;
 using VolunteerProject.Domain.Models;
 using VolunteerProject.Infrastructure.Context;
 using VolunteerProject.Infrastructure.Repositoriy.Interface;
@@ -36,8 +35,6 @@ namespace VolunteerProject.Infrastructure.Repositoriy
 
         public async Task<Post> CreatePost(Post post)
         {
-            post.Id = Guid.NewGuid();
-            post.CreateDate = DateTime.UtcNow;
             await _dbContext.Posts.AddAsync(post);
             await SaveChanges();
             var postEntity = await _dbContext.Posts.Include(p => p.User)

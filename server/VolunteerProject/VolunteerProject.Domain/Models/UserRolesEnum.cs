@@ -5,11 +5,11 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 
-namespace VolunteerProject.Domain.IdentityModels
+namespace VolunteerProject.Domain.Models
 {
-    public class UserRolesData
+    public enum UserRolesEnum
     {
-        public const string User = "User";
-        public const string Admin = "Admin";
+        User = 1,
+        Admin = 2
     }
 }

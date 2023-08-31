@@ -5,7 +5,6 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
-using VolunteerProject.Domain.IdentityModels;
 using VolunteerProject.Domain.Models;
 
 namespace VolunteerProject.Infrastructure.Context
@@ -25,6 +24,5 @@ namespace VolunteerProject.Infrastructure.Context
 
         public DbSet<Post> Posts { get; set; }
         public DbSet<Users> Users { get; set; }
-        public DbSet<Roles> Roles { get; set; }
     }
 }

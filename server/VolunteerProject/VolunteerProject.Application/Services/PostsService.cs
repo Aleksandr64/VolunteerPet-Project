@@ -10,7 +10,6 @@ using VolunteerProject.Application.DTOs.PostDTOs.Request;
 using VolunteerProject.Application.DTOs.PostDTOs.Responce;
 using VolunteerProject.Application.Mappers;
 using VolunteerProject.Application.Services.Interface;
-using VolunteerProject.Domain.IdentityModels;
 using VolunteerProject.Domain.Models;
 using VolunteerProject.Domain.ResultModels;
 using VolunteerProject.Infrastructure.Repositoriy.Interface;

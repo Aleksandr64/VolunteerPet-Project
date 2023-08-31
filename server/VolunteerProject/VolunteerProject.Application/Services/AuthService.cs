@@ -14,11 +14,11 @@ using VolunteerProject.Application.DTOs.AuthDTOs;
 using VolunteerProject.Application.DTOs.AuthDTOs.Request;
 using VolunteerProject.Application.Mappers;
 using VolunteerProject.Application.Services.Interface;
-using VolunteerProject.Domain.IdentityModels;
 using VolunteerProject.Domain.ResultModels;
 using VolunteerProject.Infrastructure.Context;
 using VolunteerProject.Infrastructure.Repositoriy.Interface;
 using System.Security.Cryptography;
+using VolunteerProject.Domain.Models;
 
 namespace VolunteerProject.Application.Services
 {
@@ -54,8 +54,7 @@ namespace VolunteerProject.Application.Services
             var authClaims = new List<Claim>
             {
                 new Claim(ClaimTypes.Name, user.UserName),
-                new Claim(ClaimTypes.Role, user.Role.Name),
-                new Claim(JwtRegisteredClaimNames.Jti, Guid.NewGuid().ToString())
+                new Claim(ClaimTypes.Role, Enum.GetName(typeof(UserRolesEnum), user.Role))
             };
 
             var token = GenerateToken(authClaims);
@@ -86,9 +85,9 @@ namespace VolunteerProject.Application.Services
 
             var password = HashPaswordCreate(userRegistration.Password);
 
-            var user = userRegistration.ToUser(password);
+            var user = userRegistration.ToUser(password, UserRolesEnum.User);
 
-            var result = await _authRepositoriy.CreateUserAsync(user, UserRolesData.User);
+            var result = await _authRepositoriy.CreateUserAsync(user);
 
             if (result != null)
             {

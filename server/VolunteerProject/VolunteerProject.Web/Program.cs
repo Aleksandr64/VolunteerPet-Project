@@ -5,7 +5,7 @@ using Microsoft.IdentityModel.Tokens;
 using System.Text;
 using VolunteerProject.Application.Services;
 using VolunteerProject.Application.Services.Interface;
-using VolunteerProject.Domain.IdentityModels;
+using VolunteerProject.Domain.Models;
 using VolunteerProject.Infrastructure.Context;
 using VolunteerProject.Infrastructure.Repositoriy;
 using VolunteerProject.Infrastructure.Repositoriy.Interface;
@@ -65,21 +65,6 @@ using(var scope = app.Services.CreateScope())
     var service = scope.ServiceProvider;
     var dbContext = service.GetRequiredService<VolunteerDbContext>();
     dbContext.Database.Migrate();
-    if (!dbContext.Roles.Any())
-    {
-        dbContext.Roles.AddRange(
-        new Roles()
-        {
-            Id = Guid.NewGuid(),
-            Name = UserRolesData.User
-        },
-        new Roles()
-        {
-            Id = Guid.NewGuid(),
-            Name = UserRolesData.Admin
-        });
-        dbContext.SaveChanges();
-    }
 }
 
 app.UseRouting();
