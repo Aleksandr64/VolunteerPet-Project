@@ -30,5 +30,20 @@ namespace VolunteerProject.Web.Controllers
             var registerResponce = await _authService.RegisterUser(registrationRequest);
             return this.GetResponse(registerResponce);
         }
+
+        [HttpPost("GetNewToken")]
+        public async Task<IActionResult> GetNewAccessToken([FromBody] TokenRequest tokenRequest)
+        {
+            var newToken = await _authService.GetNewAccessToken(tokenRequest);
+            return this.GetResponse(newToken);
+        }
+
+        [HttpPost("Logout")]
+        public async Task<IActionResult> Logout()
+        {
+            var result = await _authService.Logout();
+            return this.GetResponse(result);
+        }
+        
     }
 }

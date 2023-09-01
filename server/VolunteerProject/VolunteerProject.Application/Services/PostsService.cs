@@ -19,11 +19,11 @@ namespace VolunteerProject.Application.Services
     public class PostsService : IPostsService 
     {
         private readonly IPostRepositoriy _postRepositoriy;
-        private readonly IAuthRepositoriy _authRepositoriy;
+        private readonly IUserRepositoriy _authRepositoriy;
 
         public PostsService(
             IPostRepositoriy postRepositotiy,
-            IAuthRepositoriy authRepositoriy
+            IUserRepositoriy authRepositoriy
             )
         {
             _postRepositoriy = postRepositotiy;

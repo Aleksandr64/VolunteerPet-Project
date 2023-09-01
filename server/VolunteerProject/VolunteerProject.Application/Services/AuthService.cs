@@ -24,31 +24,34 @@ namespace VolunteerProject.Application.Services
 {
     public class AuthService : IAuthService
     {
-        private readonly IAuthRepositoriy _authRepositoriy;
+        private readonly IUserRepositoriy _authRepositoriy;
         private readonly IConfiguration _configuration;
+        private readonly ITokenRepositoriy _tokenRepositoriy;
 
         public AuthService(
-            IAuthRepositoriy authRepositoriy,
-            IConfiguration configuration)
+            IUserRepositoriy authRepositoriy,
+            IConfiguration configuration,
+            ITokenRepositoriy tokenRepositoriy)
         {
             _authRepositoriy = authRepositoriy;
             _configuration = configuration;
+            _tokenRepositoriy = tokenRepositoriy;
         }
 
-        public async Task<Result<string>> LoginUser(UserLogingRequest userLoging)
+        public async Task<Result<TokenResponce>> LoginUser(UserLogingRequest userLoging)
         {
             var user = await _authRepositoriy.FindByNameAsync(userLoging.UserName);
 
             if (user.UserName != userLoging.UserName)
             {
-                return new NotFoundResult<string>("There is no user with this Username");
+                return new NotFoundResult<TokenResponce>("There is no user with this Username");
             }
 
             var userPasswordCheck = VerifyPassword(userLoging.Password, user.PasswordHash, user.PasswordSalt);
-            
-            if(!userPasswordCheck)
+
+            if (!userPasswordCheck)
             {
-                return new NotFoundResult<string>("This password is not correct");
+                return new NotFoundResult<TokenResponce>("This password is not correct");
             }
 
             var authClaims = new List<Claim>
@@ -57,28 +60,34 @@ namespace VolunteerProject.Application.Services
                 new Claim(ClaimTypes.Role, Enum.GetName(typeof(UserRolesEnum), user.Role))
             };
 
-            var token = GenerateToken(authClaims);
+            var accessToken = GenerateAccessToken(authClaims);
+            var refreshToken = GenerateRefreshToken();
 
-            if(token != null)
+            var userRefreshToken = await _tokenRepositoriy.FindTokensByNameAsync(user.UserName);
+
+            userRefreshToken.RefreshToken = accessToken;
+
+            await _tokenRepositoriy.ChangeDataLogin(userRefreshToken);
+
+            return new SuccessResult<TokenResponce>(new TokenResponce
             {
-                return new SuccessResult<string>(new JwtSecurityTokenHandler().WriteToken(token));
-            }
-
-            return new NotFoundResult<string>("Failed create token");
+                AccessToken = accessToken,
+                RefreshToken = refreshToken,
+            });
         }
 
         public async Task<Result<string>> RegisterUser(UserRegistrationRequest userRegistration)
         {
             var userNameCheck = await _authRepositoriy.CheckByNameAsync(userRegistration.UserName);
 
-            if(userNameCheck)
+            if (userNameCheck)
             {
                 return new NotFoundResult<string>("A User with such a Username exists");
             }
 
             var userEmailCheck = await _authRepositoriy.CheckByEmailAsync(userRegistration.Email);
 
-            if(userEmailCheck)
+            if (userEmailCheck)
             {
                 return new NotFoundResult<string>("A User with such a Email exists");
             }
@@ -89,6 +98,11 @@ namespace VolunteerProject.Application.Services
 
             var result = await _authRepositoriy.CreateUserAsync(user);
 
+            await _tokenRepositoriy.CreateNewLoginAsync(new Tokens 
+            { 
+                UserName = result.UserName
+            });
+
             if (result != null)
             {
                 return new SuccessResult<string>(default!);
@@ -97,19 +111,96 @@ namespace VolunteerProject.Application.Services
             return new NotFoundResult<string>("Failer register user");
         }
 
-        private JwtSecurityToken GenerateToken(List<Claim> authClaims)
+        public async Task<Result<TokenResponce>> GetNewAccessToken(TokenRequest token)
+        {
+            string accessToken = token.AccessToken;
+            string refreshToken = token.RefreshToken;
+
+            var principal = GetPrincipalFromExpiredToken(accessToken);
+
+            if (principal == null)
+            {
+                return new NotFoundResult<TokenResponce>("Invalid Token");
+            }
+
+            var userName = principal.Identity.Name;
+
+            var user = await _tokenRepositoriy.FindTokensByNameAsync(userName);
+
+            if (user == null || user.RefreshToken != refreshToken || user.RefreshTokenExpiryTime <= DateTime.Now)
+            {
+                return new NotFoundResult<TokenResponce>("Refresh token invalid or the token has expired");
+            }
+
+            var newAccessToken = GenerateAccessToken(principal.Claims);
+            var newRefreshToken = GenerateRefreshToken();
+
+            user.RefreshToken = newRefreshToken;
+
+            await _tokenRepositoriy.ChangeDataLogin(user);
+
+            return new SuccessResult<TokenResponce>(new TokenResponce
+            {
+                AccessToken = newAccessToken,
+                RefreshToken = newRefreshToken,
+            });
+        }
+
+        public async Task<Result<string>> Logout()
+        {
+            throw new Exception();
+        }
+
+        private string GenerateAccessToken(IEnumerable<Claim> authClaims)
         {
             var authSigningKey = new SymmetricSecurityKey(Encoding.UTF8.GetBytes(_configuration["Jwt:Key"]));
 
             var token = new JwtSecurityToken(
                 issuer: _configuration["Jwt:Issuer"],
                 audience: _configuration["Jwt:Audience"],
-                expires: DateTime.Now.AddHours(3),
+                expires: DateTime.Now.AddMinutes(1),
                 claims: authClaims,
                 signingCredentials: new SigningCredentials(authSigningKey, SecurityAlgorithms.HmacSha256)
             );
 
-            return token;
+            return new JwtSecurityTokenHandler().WriteToken(token);
+        }
+        
+        private string GenerateRefreshToken()
+        {
+            var randomNumber = new byte[32];
+            using(var rng = RandomNumberGenerator.Create())
+            {
+                rng.GetBytes(randomNumber);
+                return Convert.ToBase64String(randomNumber);
+            }
+        }
+
+        private ClaimsPrincipal GetPrincipalFromExpiredToken(string token)
+        {
+            var tokenValidationParametrs = new TokenValidationParameters
+            {
+                ValidateAudience = false,
+                ValidateIssuer = false,
+                ValidateIssuerSigningKey = true,
+                IssuerSigningKey = new SymmetricSecurityKey(Encoding.UTF8.GetBytes(token)),
+                ValidateLifetime = false
+            };
+
+            var tokenHandler = new JwtSecurityTokenHandler();
+
+            SecurityToken securityToken;
+
+            var principal = tokenHandler.ValidateToken(token, tokenValidationParametrs, out securityToken);
+
+            var jwtSecurityToken = securityToken as JwtSecurityToken;
+            
+            if(jwtSecurityToken == null || !jwtSecurityToken.Header.Alg.Equals(SecurityAlgorithms.HmacSha256, StringComparison.InvariantCultureIgnoreCase))
+            {
+                return default!;
+            }
+
+            return principal;
         }
 
         private Password HashPaswordCreate(string password)

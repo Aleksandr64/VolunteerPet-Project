@@ -24,5 +24,6 @@ namespace VolunteerProject.Infrastructure.Context
 
         public DbSet<Post> Posts { get; set; }
         public DbSet<Users> Users { get; set; }
+        public DbSet<Tokens> Tokens { get; set; }
     }
 }

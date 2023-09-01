@@ -45,7 +45,7 @@ builder.Services.AddScoped<IPostsService, PostsService>();
 builder.Services.AddScoped<IUserService, UserService>();
 builder.Services.AddScoped<IUserRepositoriy, UserRepositoriy>();
 builder.Services.AddScoped<IPostRepositoriy, PostRepositoriy>();
-builder.Services.AddScoped<IAuthRepositoriy, AuthRepositoriy>();
+builder.Services.AddScoped<ITokenRepositoriy, TokenRepositoriy>();
 
 builder.Services.AddControllers();
 builder.Services.AddEndpointsApiExplorer();

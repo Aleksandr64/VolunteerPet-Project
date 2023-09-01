@@ -1,4 +1,5 @@
 ﻿
+using Azure.Core;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -11,7 +12,9 @@ namespace VolunteerProject.Application.Services.Interface
 {
     public interface IAuthService
     {
-        Task<Result<string>> LoginUser(UserLogingRequest userLoging);
+        Task<Result<TokenResponce>> LoginUser(UserLogingRequest userLoging);
         Task<Result<string>> RegisterUser(UserRegistrationRequest userRegistration);
+        Task<Result<TokenResponce>> GetNewAccessToken(TokenRequest token);
+        Task<Result<string>> Logout();
     }
 }
