@@ -13,6 +13,6 @@ namespace VolunteerProject.Domain.Models
         public Guid Id { get; set; }
         public string UserName { get; set; } = string.Empty;
         public string RefreshToken { get; set; } = string.Empty;
-        public DateTime RefreshTokenExpiryTime { get; set; } = DateTime.UtcNow;
+        public DateTime RefreshTokenExpiryTime { get; set; }
     }
 }

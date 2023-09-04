@@ -19,6 +19,7 @@ using VolunteerProject.Infrastructure.Context;
 using VolunteerProject.Infrastructure.Repositoriy.Interface;
 using System.Security.Cryptography;
 using VolunteerProject.Domain.Models;
+using Microsoft.AspNetCore.Mvc.Formatters;
 
 namespace VolunteerProject.Application.Services
 {
@@ -65,7 +66,8 @@ namespace VolunteerProject.Application.Services
 
             var userRefreshToken = await _tokenRepositoriy.FindTokensByNameAsync(user.UserName);
 
-            userRefreshToken.RefreshToken = accessToken;
+            userRefreshToken.RefreshToken = refreshToken;
+            userRefreshToken.RefreshTokenExpiryTime = DateTime.UtcNow.AddDays(1);
 
             await _tokenRepositoriy.ChangeDataLogin(userRefreshToken);
 
@@ -136,6 +138,7 @@ namespace VolunteerProject.Application.Services
             var newRefreshToken = GenerateRefreshToken();
 
             user.RefreshToken = newRefreshToken;
+            user.RefreshTokenExpiryTime = DateTime.UtcNow.AddDays(7); 
 
             await _tokenRepositoriy.ChangeDataLogin(user);
 
@@ -146,9 +149,26 @@ namespace VolunteerProject.Application.Services
             });
         }
 
-        public async Task<Result<string>> Logout()
+        public async Task<Result<string>> Logout(string accessToken)
         {
-            throw new Exception();
+            var principal = GetPrincipalFromExpiredToken(accessToken);
+
+            if (principal == null)
+            {
+                return new NotFoundResult<string>("Invalid Token");
+            }
+
+            var userName = principal.Identity.Name;
+
+            var user = await _tokenRepositoriy.FindTokensByNameAsync(userName);
+
+            user.RefreshToken = string.Empty;
+            user.RefreshTokenExpiryTime = default;
+
+            await _tokenRepositoriy.ChangeDataLogin(user);
+
+            return new SuccessResult<string>(default!);
+
         }
 
         private string GenerateAccessToken(IEnumerable<Claim> authClaims)
@@ -158,7 +178,7 @@ namespace VolunteerProject.Application.Services
             var token = new JwtSecurityToken(
                 issuer: _configuration["Jwt:Issuer"],
                 audience: _configuration["Jwt:Audience"],
-                expires: DateTime.Now.AddMinutes(1),
+                expires: DateTime.UtcNow.AddMinutes(1),
                 claims: authClaims,
                 signingCredentials: new SigningCredentials(authSigningKey, SecurityAlgorithms.HmacSha256)
             );
@@ -183,7 +203,7 @@ namespace VolunteerProject.Application.Services
                 ValidateAudience = false,
                 ValidateIssuer = false,
                 ValidateIssuerSigningKey = true,
-                IssuerSigningKey = new SymmetricSecurityKey(Encoding.UTF8.GetBytes(token)),
+                IssuerSigningKey = new SymmetricSecurityKey(Encoding.UTF8.GetBytes("DhftOS5uphK3SawssvmCJQrexST1RsyjZBjXWRg")),
                 ValidateLifetime = false
             };
 

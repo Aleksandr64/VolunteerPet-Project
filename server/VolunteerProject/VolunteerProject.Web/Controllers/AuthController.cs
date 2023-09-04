@@ -17,7 +17,7 @@ namespace VolunteerProject.Web.Controllers
             _authService = authService;
         }
 
-        [HttpPost("Loggin")]
+        [HttpPost("Login")]
         public async Task<IActionResult> Loggin([FromBody] UserLogingRequest loggingRequest)
         {
             var token = await _authService.LoginUser(loggingRequest);
@@ -39,9 +39,9 @@ namespace VolunteerProject.Web.Controllers
         }
 
         [HttpPost("Logout")]
-        public async Task<IActionResult> Logout()
+        public async Task<IActionResult> Logout(string accessToken)
         {
-            var result = await _authService.Logout();
+            var result = await _authService.Logout(accessToken);
             return this.GetResponse(result);
         }
         

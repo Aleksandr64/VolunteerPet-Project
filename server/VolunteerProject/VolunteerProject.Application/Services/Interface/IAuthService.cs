@@ -15,6 +15,6 @@ namespace VolunteerProject.Application.Services.Interface
         Task<Result<TokenResponce>> LoginUser(UserLogingRequest userLoging);
         Task<Result<string>> RegisterUser(UserRegistrationRequest userRegistration);
         Task<Result<TokenResponce>> GetNewAccessToken(TokenRequest token);
-        Task<Result<string>> Logout();
+        Task<Result<string>> Logout(string accessToken);
     }
 }
