@@ -12,8 +12,8 @@ using VolunteerProject.Infrastructure.Context;
 namespace VolunteerProject.Infrastructure.Migrations
 {
     [DbContext(typeof(VolunteerDbContext))]
-    [Migration("20230831084228_AddVolunteerDbContext")]
-    partial class AddVolunteerDbContext
+    [Migration("20230901143117_AddDbContext")]
+    partial class AddDbContext
     {
         /// <inheritdoc />
         protected override void BuildTargetModel(ModelBuilder modelBuilder)
@@ -64,6 +64,28 @@ namespace VolunteerProject.Infrastructure.Migrations
                     b.HasIndex("UserId");
 
                     b.ToTable("Posts");
+                });
+
+            modelBuilder.Entity("VolunteerProject.Domain.Models.Tokens", b =>
+                {
+                    b.Property<Guid>("Id")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("uniqueidentifier");
+
+                    b.Property<string>("RefreshToken")
+                        .IsRequired()
+                        .HasColumnType("nvarchar(max)");
+
+                    b.Property<DateTime>("RefreshTokenExpiryTime")
+                        .HasColumnType("datetime2");
+
+                    b.Property<string>("UserName")
+                        .IsRequired()
+                        .HasColumnType("nvarchar(max)");
+
+                    b.HasKey("Id");
+
+                    b.ToTable("Tokens");
                 });
 
             modelBuilder.Entity("VolunteerProject.Domain.Models.Users", b =>
