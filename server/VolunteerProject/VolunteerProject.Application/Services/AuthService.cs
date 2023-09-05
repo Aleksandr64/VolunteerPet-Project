@@ -67,14 +67,14 @@ namespace VolunteerProject.Application.Services
             var userRefreshToken = await _tokenRepositoriy.FindTokensByNameAsync(user.UserName);
 
             userRefreshToken.RefreshToken = refreshToken;
-            userRefreshToken.RefreshTokenExpiryTime = DateTime.UtcNow.AddDays(1);
+            userRefreshToken.RefreshTokenExpiryTime = DateTime.UtcNow.AddDays(7);
 
             await _tokenRepositoriy.ChangeDataLogin(userRefreshToken);
 
             return new SuccessResult<TokenResponce>(new TokenResponce
             {
                 AccessToken = accessToken,
-                RefreshToken = refreshToken,
+                RefreshToken = refreshToken
             });
         }
 
