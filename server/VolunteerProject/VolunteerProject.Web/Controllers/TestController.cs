@@ -10,7 +10,7 @@ namespace VolunteerProject.Web.Controllers
     [ApiController]
     public class TestController : ControllerBase
     {
-        [Authorize("Admin")]
+        [Authorize("User")]
         [HttpGet("TestEndPoint")]
         public IActionResult TestRequest()
         {

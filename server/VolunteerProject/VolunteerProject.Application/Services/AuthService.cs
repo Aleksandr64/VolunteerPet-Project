@@ -178,7 +178,7 @@ namespace VolunteerProject.Application.Services
             var token = new JwtSecurityToken(
                 issuer: _configuration["Jwt:Issuer"],
                 audience: _configuration["Jwt:Audience"],
-                expires: DateTime.UtcNow.AddMinutes(15),
+                expires: DateTime.UtcNow.AddMinutes(1),
                 claims: authClaims,
                 signingCredentials: new SigningCredentials(authSigningKey, SecurityAlgorithms.HmacSha256)
             );
@@ -232,31 +232,37 @@ namespace VolunteerProject.Application.Services
 
             var tokenHandler = new JwtSecurityTokenHandler();
 
-
-            var tokenValidationParametrs = new TokenValidationParameters
+            try
             {
-                ValidateAudience = false,
-                ValidateIssuer = false,
-                ValidateIssuerSigningKey = true,
-                IssuerSigningKey = new SymmetricSecurityKey(Encoding.UTF8.GetBytes(_configuration["Jwt:Key"])),
-                ValidateLifetime = true,
-                ClockSkew = TimeSpan.Zero
-            };
+                var tokenValidationParametrs = new TokenValidationParameters
+                {
+                    ValidateAudience = false,
+                    ValidateIssuer = false,
+                    ValidateIssuerSigningKey = true,
+                    IssuerSigningKey = new SymmetricSecurityKey(Encoding.UTF8.GetBytes(_configuration["Jwt:Key"])),
+                    ValidateLifetime = true,
+                    ClockSkew = TimeSpan.Zero
+                };
 
-            SecurityToken validatedToken;
+                SecurityToken validatedToken;
 
-            var principal = tokenHandler.ValidateToken(accessToken, tokenValidationParametrs, out validatedToken);
+                var principal = tokenHandler.ValidateToken(accessToken, tokenValidationParametrs, out validatedToken);
 
-            var jwtToken = validatedToken as JwtSecurityToken;
+                var jwtToken = validatedToken as JwtSecurityToken;
 
-            if (jwtToken == null)
-            {
-                return default!;
+                if (jwtToken == null)
+                {
+                    return default!;
+                }
+
+                var roleUser = principal.FindFirstValue(ClaimTypes.Role);
+
+                return roleUser;
             }
-
-            var roleUser = principal.FindFirstValue(ClaimTypes.Role);
-
-            return roleUser;
+            catch 
+            {
+                return default;
+            }
         }
         private Password HashPaswordCreate(string password)
         {

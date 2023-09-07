@@ -1,4 +1,6 @@
-﻿using VolunteerProject.Application.Services.Interface;
+﻿using Microsoft.AspNetCore.Mvc;
+using VolunteerProject.Application.Services.Interface;
+using VolunteerProject.Web.Decryptor;
 
 namespace VolunteerProject.Web.CustomMiddlewares
 {

@@ -33,13 +33,13 @@ namespace VolunteerProject.Web.CustomAttribute
                 bool checkUserRole = _roles.Any(x => x == (string)userRole);
                 if (!checkUserRole)
                 {
-                    context.Result = new JsonResult(new { message = "Unauthorized" }) { StatusCode = StatusCodes.Status401Unauthorized };
+                    context.Result = new JsonResult(new { message = "This user don't have access" }) { StatusCode = StatusCodes.Status401Unauthorized };
                 }
             }
 
             if(userRole == null)
             {
-                context.Result = new JsonResult(new { message = "Unauthorized" }) { StatusCode = StatusCodes.Status401Unauthorized };
+                context.Result = new JsonResult(new { message = "Expired time JWT Token the end" }) { StatusCode = StatusCodes.Status401Unauthorized };
             }
         }
     }
