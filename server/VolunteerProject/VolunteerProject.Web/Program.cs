@@ -9,6 +9,7 @@ using VolunteerProject.Domain.Models;
 using VolunteerProject.Infrastructure.Context;
 using VolunteerProject.Infrastructure.Repositoriy;
 using VolunteerProject.Infrastructure.Repositoriy.Interface;
+using VolunteerProject.Web.CustomMiddlewares;
 
 var builder = WebApplication.CreateBuilder(args);
 
@@ -69,6 +70,7 @@ using(var scope = app.Services.CreateScope())
 
 app.UseRouting();
 
+app.UseMiddleware<JwtMiddleware>();
 app.UseAuthentication();
 app.UseAuthorization();
 

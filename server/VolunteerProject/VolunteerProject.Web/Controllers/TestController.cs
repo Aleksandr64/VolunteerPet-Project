@@ -1,8 +1,8 @@
-﻿using Microsoft.AspNetCore.Authorization;
-using Microsoft.AspNetCore.Http;
+﻿using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
 using VolunteerProject.Domain.ResultModels;
 using VolunteerProject.Web.Decryptor;
+using VolunteerProject.Web.CustomAttribute;
 
 namespace VolunteerProject.Web.Controllers
 {
@@ -10,7 +10,7 @@ namespace VolunteerProject.Web.Controllers
     [ApiController]
     public class TestController : ControllerBase
     {
-        [Authorize]
+        [Authorize("Admin")]
         [HttpGet("TestEndPoint")]
         public IActionResult TestRequest()
         {

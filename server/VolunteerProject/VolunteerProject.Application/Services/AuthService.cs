@@ -178,7 +178,7 @@ namespace VolunteerProject.Application.Services
             var token = new JwtSecurityToken(
                 issuer: _configuration["Jwt:Issuer"],
                 audience: _configuration["Jwt:Audience"],
-                expires: DateTime.UtcNow.AddMinutes(1),
+                expires: DateTime.UtcNow.AddMinutes(15),
                 claims: authClaims,
                 signingCredentials: new SigningCredentials(authSigningKey, SecurityAlgorithms.HmacSha256)
             );
@@ -203,7 +203,7 @@ namespace VolunteerProject.Application.Services
                 ValidateAudience = false,
                 ValidateIssuer = false,
                 ValidateIssuerSigningKey = true,
-                IssuerSigningKey = new SymmetricSecurityKey(Encoding.UTF8.GetBytes("DhftOS5uphK3SawssvmCJQrexST1RsyjZBjXWRg")),
+                IssuerSigningKey = new SymmetricSecurityKey(Encoding.UTF8.GetBytes(_configuration["Jwt:Key"])),
                 ValidateLifetime = false
             };
 
@@ -223,6 +223,41 @@ namespace VolunteerProject.Application.Services
             return principal;
         }
 
+        public string ValidateToken(string accessToken)
+        {
+            if (accessToken == null)
+            {
+                return default!;
+            }
+
+            var tokenHandler = new JwtSecurityTokenHandler();
+
+
+            var tokenValidationParametrs = new TokenValidationParameters
+            {
+                ValidateAudience = false,
+                ValidateIssuer = false,
+                ValidateIssuerSigningKey = true,
+                IssuerSigningKey = new SymmetricSecurityKey(Encoding.UTF8.GetBytes(_configuration["Jwt:Key"])),
+                ValidateLifetime = true,
+                ClockSkew = TimeSpan.Zero
+            };
+
+            SecurityToken validatedToken;
+
+            var principal = tokenHandler.ValidateToken(accessToken, tokenValidationParametrs, out validatedToken);
+
+            var jwtToken = validatedToken as JwtSecurityToken;
+
+            if (jwtToken == null)
+            {
+                return default!;
+            }
+
+            var roleUser = principal.FindFirstValue(ClaimTypes.Role);
+
+            return roleUser;
+        }
         private Password HashPaswordCreate(string password)
         {
             const int keySize = 64;
@@ -237,10 +272,10 @@ namespace VolunteerProject.Application.Services
                 salt,
                 iterations,
                 hashAlgorithm,
-                keySize); 
+                keySize);
 
-            return new Password() 
-            { 
+            return new Password()
+            {
                 hashPassword = Convert.ToHexString(hash),
                 saltPassword = Convert.ToHexString(salt)
             };
@@ -253,7 +288,9 @@ namespace VolunteerProject.Application.Services
             var saltByte = Convert.FromHexString(salt);
             var hashToCompare = Rfc2898DeriveBytes.Pbkdf2(password, saltByte, iterations, hashAlgorithm, keySize);
 
-            return CryptographicOperations.FixedTimeEquals(hashToCompare, Convert.FromHexString(hash));
+            var hashPassword = CryptographicOperations.FixedTimeEquals(hashToCompare, Convert.FromHexString(hash));
+
+            return hashPassword;
         }
     }
 }
