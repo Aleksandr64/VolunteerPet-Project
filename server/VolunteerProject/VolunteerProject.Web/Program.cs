@@ -70,9 +70,8 @@ using(var scope = app.Services.CreateScope())
 
 app.UseRouting();
 
-app.UseMiddleware<JwtMiddleware>();
 app.UseAuthentication();
-app.UseAuthorization();
+app.UseMiddleware<JwtMiddleware>();
 
 app.UseEndpoints(endpoints => { endpoints.MapControllers(); }); 
 

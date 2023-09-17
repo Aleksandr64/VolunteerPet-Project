@@ -17,7 +17,6 @@ using VolunteerProject.Application.Services.Interface;
 using VolunteerProject.Domain.ResultModels;
 using VolunteerProject.Infrastructure.Context;
 using VolunteerProject.Infrastructure.Repositoriy.Interface;
-using System.Security.Cryptography;
 using VolunteerProject.Domain.Models;
 using Microsoft.AspNetCore.Mvc.Formatters;
 
@@ -28,6 +27,7 @@ namespace VolunteerProject.Application.Services
         private readonly IUserRepositoriy _authRepositoriy;
         private readonly IConfiguration _configuration;
         private readonly ITokenRepositoriy _tokenRepositoriy;
+        
 
         public AuthService(
             IUserRepositoriy authRepositoriy,
@@ -38,7 +38,7 @@ namespace VolunteerProject.Application.Services
             _configuration = configuration;
             _tokenRepositoriy = tokenRepositoriy;
         }
-
+        
         public async Task<Result<TokenResponce>> LoginUser(UserLogingRequest userLoging)
         {
             var user = await _authRepositoriy.FindByNameAsync(userLoging.UserName);
@@ -127,20 +127,28 @@ namespace VolunteerProject.Application.Services
 
             var userName = principal.Identity.Name;
 
-            var user = await _tokenRepositoriy.FindTokensByNameAsync(userName);
+            var userRefreshToken = await _tokenRepositoriy.FindTokensByNameAsync(userName);
 
-            if (user == null || user.RefreshToken != refreshToken || user.RefreshTokenExpiryTime <= DateTime.Now)
+            if (userRefreshToken == null || userRefreshToken.RefreshToken != refreshToken || userRefreshToken.RefreshTokenExpiryTime <= DateTime.Now)
             {
                 return new NotFoundResult<TokenResponce>("Refresh token invalid or the token has expired");
             }
 
-            var newAccessToken = GenerateAccessToken(principal.Claims);
+            var user = await _authRepositoriy.FindByNameAsync(userName);
+
+            var authClaims = new List<Claim>
+            {
+                new Claim(ClaimTypes.Name, user.UserName),
+                new Claim(ClaimTypes.Role, Enum.GetName(typeof(UserRolesEnum), user.Role))
+            };
+
+            var newAccessToken = GenerateAccessToken(authClaims);
             var newRefreshToken = GenerateRefreshToken();
 
-            user.RefreshToken = newRefreshToken;
-            user.RefreshTokenExpiryTime = DateTime.UtcNow.AddDays(7); 
+            userRefreshToken.RefreshToken = newRefreshToken;
+            userRefreshToken.RefreshTokenExpiryTime = DateTime.UtcNow.AddDays(7); 
 
-            await _tokenRepositoriy.ChangeDataLogin(user);
+            await _tokenRepositoriy.ChangeDataLogin(userRefreshToken);
 
             return new SuccessResult<TokenResponce>(new TokenResponce
             {
@@ -178,7 +186,7 @@ namespace VolunteerProject.Application.Services
             var token = new JwtSecurityToken(
                 issuer: _configuration["Jwt:Issuer"],
                 audience: _configuration["Jwt:Audience"],
-                expires: DateTime.UtcNow.AddMinutes(1),
+                expires: DateTime.UtcNow.AddMinutes(10),
                 claims: authClaims,
                 signingCredentials: new SigningCredentials(authSigningKey, SecurityAlgorithms.HmacSha256)
             );
@@ -214,8 +222,8 @@ namespace VolunteerProject.Application.Services
             var principal = tokenHandler.ValidateToken(token, tokenValidationParametrs, out securityToken);
 
             var jwtSecurityToken = securityToken as JwtSecurityToken;
-            
-            if(jwtSecurityToken == null || !jwtSecurityToken.Header.Alg.Equals(SecurityAlgorithms.HmacSha256, StringComparison.InvariantCultureIgnoreCase))
+
+            if (jwtSecurityToken == null || !jwtSecurityToken.Header.Alg.Equals(SecurityAlgorithms.HmacSha256, StringComparison.InvariantCultureIgnoreCase))
             {
                 return default!;
             }
@@ -257,13 +265,14 @@ namespace VolunteerProject.Application.Services
 
                 var roleUser = principal.FindFirstValue(ClaimTypes.Role);
 
-                return roleUser;
+                return roleUser!;
             }
             catch 
             {
-                return default;
+                return default!;
             }
         }
+
         private Password HashPaswordCreate(string password)
         {
             const int keySize = 64;
@@ -286,6 +295,7 @@ namespace VolunteerProject.Application.Services
                 saltPassword = Convert.ToHexString(salt)
             };
         }
+
         private bool VerifyPassword(string password, string hash, string salt)
         {
             const int keySize = 64;

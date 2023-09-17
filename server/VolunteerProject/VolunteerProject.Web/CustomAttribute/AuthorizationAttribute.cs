@@ -7,14 +7,14 @@ using VolunteerProject.Domain.Models;
 namespace VolunteerProject.Web.CustomAttribute
 {
     [AttributeUsage(AttributeTargets.Class | AttributeTargets.Method)]
-    public class AuthorizeAttribute : Attribute, IAuthorizationFilter
+    public class AuthorizationAttribute : Attribute, IAuthorizationFilter
     {
-        private string[] _roles;
-        public AuthorizeAttribute()
+        private readonly UserRolesEnum[] _roles;
+        public AuthorizationAttribute()
         {
 
         }
-        public AuthorizeAttribute(params string[] roles)
+        public AuthorizationAttribute(params UserRolesEnum[] roles)
         {
             _roles = roles;
         }
@@ -30,7 +30,7 @@ namespace VolunteerProject.Web.CustomAttribute
 
             if(_roles != null && userRole != null)
             {   
-                bool checkUserRole = _roles.Any(x => x == (string)userRole);
+                bool checkUserRole = _roles.Any(x => Enum.GetName(typeof(UserRolesEnum), x) == (string)userRole);
                 if (!checkUserRole)
                 {
                     context.Result = new JsonResult(new { message = "This user don't have access" }) { StatusCode = StatusCodes.Status401Unauthorized };
