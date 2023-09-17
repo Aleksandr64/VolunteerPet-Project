@@ -10,6 +10,6 @@ namespace VolunteerProject.Domain.Models
     public enum UserRolesEnum
     {
         User = 1,
-        Admin = 2
+        Admin
     }
 }
